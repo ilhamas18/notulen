@@ -48,21 +48,6 @@ module.exports = {
       status: {
         type: Sequelize.STRING
       },
-      link_img_foto: {
-        type: Sequelize.JSON
-      },
-      link_img_daftar_hadir: {
-        type: Sequelize.JSON
-      },
-      link_img_surat_undangan: {
-        type: Sequelize.JSON
-      },
-      link_img_spj: {
-        type: Sequelize.JSON
-      },
-      link_img_pendukung: {
-        type: Sequelize.JSON
-      },
       id_pegawai: {
         type: Sequelize.INTEGER,
         allowNull: false,

@@ -67,12 +67,12 @@ class NotulenController {
             attributes: {
               attributes: ['nama', 'nip', 'pangkat'],
             },
-            include: {
-              model: Perangkat_Daerah,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            }
+            // include: {
+            //   model: Perangkat_Daerah,
+            //   attributes: {
+            //     exclude: [['createdAt', 'updatedAt']]
+            //   }
+            // }
           }
         ]
       })
@@ -98,7 +98,7 @@ class NotulenController {
         })
       }
     } catch (err) {
-      console.log(err, '<<<<<<<,');
+      console.log(err.message, '<<<<<<<,');
       res.status(500).json({
         success: false,
         data: {
@@ -113,6 +113,7 @@ class NotulenController {
   static addNotulen = async (req, res) => {
     try {
       const payload = {
+        tagging: req.body.tagging,
         tanggal: req.body.tanggal,
         waktu: req.body.waktu,
         pendahuluan: req.body.pendahuluan,
@@ -127,7 +128,7 @@ class NotulenController {
         status: req.body.status,
         id_pegawai: req.body.id_pegawai
       }
-
+      // console.log(payload);
       const response = await Notulen.create(payload);
 
       res.status(201).json({
@@ -139,6 +140,7 @@ class NotulenController {
         }
       })
     } catch (err) {
+      console.log(err.message);
       if (err.name === 'SequelizeDatabaseError') {
         res.status(400).json({
           success: false,

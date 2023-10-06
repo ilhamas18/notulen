@@ -1,4 +1,5 @@
 'use strict';
+const { hashPassword } = require('../helpers/bcrypt');
 const {
   Model
 } = require('sequelize');
@@ -11,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Pegawai.hasMany(models.Notulen, { foreignKey: 'id_pegawai' });
-      Pegawai.belongsTo(models.Perangkat_Daerah, { foreignKey: 'id_opd' });
+      Pegawai.belongsTo(models.Perangkat_Daerah, { foreignKey: 'kode_opd' });
     }
   }
   Pegawai.init({
@@ -19,12 +20,18 @@ module.exports = (sequelize, DataTypes) => {
     nip: DataTypes.STRING,
     password: DataTypes.STRING,
     pangkat: DataTypes.STRING,
+    nama_pangkat: DataTypes.STRING,
     jabatan: DataTypes.STRING,
     role: DataTypes.STRING,
-    id_opd: DataTypes.INTEGER
+    kode_opd: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Pegawai',
+    hooks: {
+      beforeCreate: (Pegawai, opt) => {
+        Pegawai.password = hashPassword(Pegawai.password);
+      }
+    }
   });
   return Pegawai;
 };

@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Notulen.init({
+    tagging: DataTypes.JSON,
     tanggal: DataTypes.JSON,
     waktu: DataTypes.STRING,
     pendahuluan: DataTypes.STRING(1234),
@@ -27,11 +28,6 @@ module.exports = (sequelize, DataTypes) => {
     pelapor: DataTypes.JSON,
     atasan: DataTypes.JSON,
     status: DataTypes.STRING,
-    link_img_foto: DataTypes.JSON,
-    link_img_daftar_hadir: DataTypes.JSON,
-    link_img_surat_undangan: DataTypes.JSON,
-    link_img_spj: DataTypes.JSON,
-    link_img_pendukung: DataTypes.JSON,
     id_pegawai: DataTypes.INTEGER,
   }, {
     sequelize,

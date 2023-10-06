@@ -21,14 +21,17 @@ module.exports = {
       pangkat: {
         type: Sequelize.STRING
       },
+      nama_pangkat: {
+        type: Sequelize.STRING
+      },
       jabatan: {
         type: Sequelize.STRING
       },
       role: {
         type: Sequelize.STRING
       },
-      id_opd: {
-        type: Sequelize.INTEGER,
+      kode_opd: {
+        type: Sequelize.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
@@ -38,8 +41,10 @@ module.exports = {
         },
         references: {
           model: 'Perangkat_Daerahs',
-          key: 'id'
-        }
+          key: 'kode_opd'
+        },
+        onUpdate: 'CASCADE', // Optional: Add cascading options as needed
+        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,

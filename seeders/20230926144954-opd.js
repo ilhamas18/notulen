@@ -2,7 +2,7 @@
 
 const data = [
   {
-    kode_opd: '10.0.0.0.1',
+    kode_opd: '5.01.5.05.0.00.02.0000',
     nama_opd: 'BADAN PERENCANAAN, PENELITIAN DAN PEMBANGUNAN DAERAH',
     singkatan: 'BAPPELITBANGDA',
     alamat: 'Jl  Mayjen Panjaitan  No. 17 Lt II, Kode Pos: 63137, Jawa Timur',

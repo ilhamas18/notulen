@@ -30,7 +30,7 @@ class TaggingController {
       const payload = {
         nama_tagging: req.body.nama_tagging
       }
-
+     
       const response = await Tagging.create(payload);
 
       res.status(201).json({
@@ -48,7 +48,7 @@ class TaggingController {
           data: {
             code: 400,
             message: 'Periksa kembali data Anda!',
-            data: null
+            data: err.message
           }
         })
       } else if (err.name === 'SequelizeUniqueConstraintError') {

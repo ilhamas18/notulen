@@ -6,14 +6,29 @@ module.exports = {
       id: {
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER
       },
       kode_opd: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        primaryKey: true,
+        unique: true,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Kode OPD tidak boleh kosong!'
+          },
+        }
       },
       nama_opd: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Nama OPD tidak boleh kosong!'
+          }
+        }
       },
       singkatan: {
         type: Sequelize.STRING
