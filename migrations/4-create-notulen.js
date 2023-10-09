@@ -48,6 +48,40 @@ module.exports = {
       status: {
         type: Sequelize.STRING
       },
+      bulan: {
+        type: Sequelize.STRING
+      },
+      link_img_foto: {
+        type: Sequelize.JSON
+      },
+      link_img_daftar_hadir: {
+        type: Sequelize.JSON
+      },
+      link_img_surat_undangan: {
+        type: Sequelize.JSON
+      },
+      link_img_spj: {
+        type: Sequelize.JSON
+      },
+      link_img_pendukung: {
+        type: Sequelize.JSON
+      },
+      kode_opd: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Harap masukkan OPD terkait!'
+          }
+        },
+        references: {
+          model: 'Perangkat_Daerahs',
+          key: 'kode_opd'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
       id_pegawai: {
         type: Sequelize.INTEGER,
         allowNull: false,

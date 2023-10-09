@@ -75,4 +75,118 @@ const authorizeAdmin = async (req, res, next) => {
   }
 }
 
-module.exports = { authorize, authorizeAdmin };
+const authorizeAdminOPD = async (req, res, next) => {
+  try {
+    const data = await Pegawai.findOne({ where: { id: +req.decoded.id }})
+
+    if (!data) {
+      res.status(404).json({
+        success: false,
+        data: {
+          code: 404,
+          message: "User not found",
+          data: null
+        }
+      })
+    } 
+
+    if (data.role != 2) {
+      res.status(401).json({
+        success: false,
+        data: {
+          code: 404,
+          message: 'Unauthorize as Admin OPD',
+          data: null
+        }
+      })
+    }
+    next();
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      data: {
+        code: 500,
+        message: 'Trouble connection',
+        data: null
+      }
+    })
+  }
+}
+
+const authorizeVerifikator = async (req, res, next) => {
+  try {
+    const data = await Pegawai.findOne({ where: { id: +req.decoded.id }})
+
+    if (!data) {
+      res.status(404).json({
+        success: false,
+        data: {
+          code: 404,
+          message: "User not found",
+          data: null
+        }
+      })
+    } 
+
+    if (data.role != 3) {
+      res.status(401).json({
+        success: false,
+        data: {
+          code: 404,
+          message: 'Unauthorize as Verifikator',
+          data: null
+        }
+      })
+    }
+    next();
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      data: {
+        code: 500,
+        message: 'Trouble connection',
+        data: null
+      }
+    })
+  }
+}
+
+const authorizeUser = async (req, res, next) => {
+  try {
+    const data = await Pegawai.findOne({ where: { id: +req.decoded.id }})
+
+    if (!data) {
+      res.status(404).json({
+        success: false,
+        data: {
+          code: 404,
+          message: "User not found",
+          data: null
+        }
+      })
+    } 
+
+    if (data.role != 4) {
+      res.status(401).json({
+        success: false,
+        data: {
+          code: 404,
+          message: 'Unauthorize as User',
+          data: null
+        }
+      })
+    }
+    next();
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      data: {
+        code: 500,
+        message: 'Trouble connection',
+        data: null
+      }
+    })
+  }
+}
+
+module.exports = { authorize, authorizeAdmin, authorizeAdminOPD, authorizeVerifikator, authorizeUser };

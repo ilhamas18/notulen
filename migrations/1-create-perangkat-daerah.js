@@ -10,9 +10,9 @@ module.exports = {
       },
       kode_opd: {
         type: Sequelize.STRING,
-        primaryKey: true,
         unique: true,
         allowNull: false,
+        primaryKey: true,
         validate: {
           notEmpty: {
             args: true,

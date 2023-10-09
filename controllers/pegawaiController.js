@@ -10,10 +10,11 @@ class PegawaiController {
       const response = await Pegawai.findAll({
         include: [{
           model: Perangkat_Daerah,
+          attributes: ['nama_opd']
         }],
-        // attributes: {
-        //   exclude: ['password'],
-        // }
+        attributes: {
+          exclude: ['password'],
+        }
       })
 
       res.status(200).json({
@@ -63,12 +64,14 @@ class PegawaiController {
   static getOnePegawai = async (req, res) => {
     try {
       const response = await Pegawai.findOne({
-        where: { id: +req.params.id },
+        where: { nip: req.params.nip },
         attributes: {
           exclude: ['password', 'createdAt', 'updatedAt']
-        }
+        },
+        include: [{
+          model: Perangkat_Daerah,
+        }]
       })
-
 
       if (response === null) {
         res.status(404).json({
@@ -95,7 +98,7 @@ class PegawaiController {
         data: {
           code: 500,
           message: 'Internal server error',
-          data: err
+          data: err.message
         }
       })
     }
@@ -177,10 +180,10 @@ class PegawaiController {
       })
 
       if (!user) {
-        res.status(400).json({
+        res.status(404).json({
           success: false,
           data: {
-            code: 400,
+            code: 404,
             message: 'NIP tidak ditemukan'
           }
         })

@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      Notulen.belongsTo(models.Perangkat_Daerah, { foreignKey: 'kode_opd' });
       Notulen.belongsTo(models.Pegawai, { foreignKey: 'id_pegawai' });
       Notulen.hasMany(models.File_Pendukung, { foreignKey: 'id_notulen' });
     }
@@ -28,6 +29,13 @@ module.exports = (sequelize, DataTypes) => {
     pelapor: DataTypes.JSON,
     atasan: DataTypes.JSON,
     status: DataTypes.STRING,
+    bulan: DataTypes.STRING,
+    link_img_foto: DataTypes.JSON,
+    link_img_daftar_hadir: DataTypes.JSON,
+    link_img_surat_undangan: DataTypes.JSON,
+    link_img_spj: DataTypes.JSON,
+    link_img_pendukung: DataTypes.JSON,
+    kode_opd: DataTypes.STRING,
     id_pegawai: DataTypes.INTEGER,
   }, {
     sequelize,
