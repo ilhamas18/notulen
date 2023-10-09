@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     atasan: DataTypes.JSON,
     status: DataTypes.STRING,
     bulan: DataTypes.STRING,
+    tahun: DataTypes.STRING,
     link_img_foto: DataTypes.JSON,
     link_img_daftar_hadir: DataTypes.JSON,
     link_img_surat_undangan: DataTypes.JSON,

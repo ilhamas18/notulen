@@ -51,6 +51,9 @@ module.exports = {
       bulan: {
         type: Sequelize.STRING
       },
+      tahun: {
+        type: Sequelize.STRING
+      },
       link_img_foto: {
         type: Sequelize.JSON
       },

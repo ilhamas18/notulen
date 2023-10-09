@@ -9,7 +9,7 @@ router.delete('/deleteFile/:filename', NotulenController.deleteFile);
 router.get('/getFile/:filename', NotulenController.downloadFile);
 router.use(authenticate);
 router.get('/getNotulenDetail/:id', NotulenController.getOneNotulen);
-router.get('/getAuthNotulen/:kode_opd', NotulenController.getAuthNotulen);
+router.get('/getAuthNotulen/:kode_opd/:bulan/:tahun', NotulenController.getAuthNotulen);
 router.get('/getAllNotulens', NotulenController.getAllNotulen);
 router.post('/uploadFile', upload.single('file'), NotulenController.uploadFile);
 router.post('/addNotulen', authorizeUser, NotulenController.addNotulen);

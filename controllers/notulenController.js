@@ -53,6 +53,10 @@ class NotulenController {
       if (req.decoded.role == 1) {
         const response = await Notulen.findAll({
           order: [['createdAt', 'DESC']],
+          where: {
+            bulan: req.params.bulan,
+            tahun: req.params.tahun
+          }
         })
 
         res.status(200).json({
@@ -66,7 +70,9 @@ class NotulenController {
       } else if (req.decoded.role == 2 || req.decoded.role == 3) {
         const response = await Notulen.findAll({
           where: {
-            kode_opd: req.params.kode_opd
+            kode_opd: req.params.kode_opd,
+            bulan: req.params.bulan,
+            tahun: req.params.tahun
           },
           order: [['createdAt', 'DESC']],
         })
@@ -82,7 +88,9 @@ class NotulenController {
       } else if (req.decoded.role == 4) {
         const response = await Notulen.findAll({
           where: {
-            id_pegawai: req.decoded.id
+            id_pegawai: req.decoded.id,
+            bulan: req.params.bulan,
+            tahun: req.params.tahun
           },
           order: [['createdAt', 'DESC']],
         })
