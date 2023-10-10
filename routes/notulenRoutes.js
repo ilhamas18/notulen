@@ -13,24 +13,14 @@ const {
 router.delete("/deleteFile/:filename", NotulenController.deleteFile);
 router.get("/getFile/:filename", NotulenController.downloadFile);
 router.use(authenticate);
-router.get(
-  "/getNotulenDetail/:id",
-  authorizeUser,
-  NotulenController.getOneNotulen
-);
-router.get(
-  "/getAuthNotulen/:kode_opd/:bulan/:tahun",
-  NotulenController.getAuthNotulen
-);
+router.get("/getNotulenDetail/:id", NotulenController.getOneNotulen);
+router.get("/getAuthNotulen/:kode_opd/:nip/:bulan/:tahun", NotulenController.getAuthNotulen);
+// router.get('/getVerificationNotulen/:kode_opd/:')
 router.get("/getAllNotulens", NotulenController.getAllNotulen);
 router.post("/uploadFile", upload.single("file"), NotulenController.uploadFile);
 router.post("/addNotulen", authorizeUser, NotulenController.addNotulen);
 router.put("/addTagging/:id", authorizeAdminOPD, NotulenController.addTagging);
 router.put("/editNotulen/:id", NotulenController.editNotulen);
-router.put(
-  "/updateStatus/:id",
-  authorizeVerifikator,
-  NotulenController.updateStatus
-);
+router.put("/updateStatus/:id", authorizeVerifikator, NotulenController.updateStatus);
 
 module.exports = router;

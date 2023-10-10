@@ -1,11 +1,14 @@
 const router = require('express').Router();
 const PegawaiController = require('../controllers/pegawaiController');
 const authenticate = require('../middlewares/authenticate');
+const { authorizeAdminOrAdminOPD } = require('../middlewares/authorize');
 
 router.post('/login', PegawaiController.login);
-router.post('/syncDataPegawai', PegawaiController.syncDataPegawai);
 router.use(authenticate);
-router.get('/getAllPegawai', PegawaiController.getAllPegawai);
+router.get('/syncDataPegawai/:kode_opd', PegawaiController.syncDataPegawai);
+router.get('/getAllPegawai/:kode_opd', PegawaiController.getAllPegawai);
+router.get('/getPelapor/:kode_opd/:tipe', PegawaiController.getAllPelapor);
+router.post('/addPegawai', PegawaiController.addPegawai);
 router.get('/getProfile', PegawaiController.getProfile);
 router.get('/getPegawai/:nip', PegawaiController.getOnePegawai);
 

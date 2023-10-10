@@ -6,14 +6,22 @@ module.exports = {
       id: {
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER
       },
       nama: {
         type: Sequelize.STRING
       },
       nip: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false,
+        primaryKey: true,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'NIP tidak boleh kosong!'
+          },
+        }
       },
       password: {
         type: Sequelize.STRING
