@@ -1,9 +1,17 @@
-const fs = require('fs');
-const util = require('util');
-const unlinkFile = util.promisify(fs.unlink);
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' })
+const path = require('path');
+const uploadFolder = path.join(__dirname, "Videos"); // use a variable to hold the value of upload folder
 
-const { uploadFile, getFileStream, deleteFileFromS3 } = require('./s3');
+const storage = multer.diskStorage({
+  destination: uploadFolder, // use it when upload
+  filename: (req, file, cb) => {
+    // nameFile = file.originalname + " "+ Date.now() // --> give "video.mp4 1622180824748"
+    let [filename, extension] = file.originalname.split('.');
+    let nameFile = filename + "-" + Date.now() + "." + extension; // --> give "video-1622181268053.mp4"
+    cb(null, nameFile)
+  }
+})
 
-module.exports = { upload, uploadFile, getFileStream, unlinkFile, deleteFileFromS3 };
+const upload = multer({ storage });
+
+module.exports = upload;

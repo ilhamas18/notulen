@@ -240,47 +240,8 @@ class NotulenController {
     }
   };
 
-  static uploadFile = async (req, res, next) => {
-    try {
-      res.status(201).json({
-        success: true,
-        data: {
-          code: 201,
-          message: "Sukses upload file",
-          data: "Success " + req.file.location + " location!",
-        },
-      });
-    } catch (err) {
-      res.status(500).json({
-        success: false,
-        data: {
-          code: 500,
-          message: "Internal server error",
-          data: err.message,
-        },
-      });
-    }
-  };
-
   static downloadFile = async (req, res) => {
-    const s3 = new aws.S3();
-    try {
-      const filename = req.params.filename;
-      let x = await s3
-        .getObject({ Bucket: "basarnas-bucket", Key: filename })
-        .promise();
-      res.send(x.Body);
-    } catch (err) {
-      console.log(err.message, "<<<< yuhu");
-      res.status(500).json({
-        success: false,
-        data: {
-          code: 500,
-          message: "Internal server error",
-          data: err.message,
-        },
-      });
-    }
+    res.download(req.params.filename)
   };
 
   static deleteFile = async (req, res) => {
