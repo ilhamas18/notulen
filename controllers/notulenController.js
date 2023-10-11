@@ -2,6 +2,7 @@ const { Notulen, Pegawai, Perangkat_Daerah } = require("../models");
 const Sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const aws = require("aws-sdk");
+const axios = require('axios');
 
 class NotulenController {
   static getAllNotulen = async (req, res) => {
@@ -193,15 +194,17 @@ class NotulenController {
         where: { id: +req.params.id },
         include: [
           {
+            model: Perangkat_Daerah,
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            }
+          },
+          {
             model: Pegawai,
             attributes: {
-              attributes: ["nama", "nip", "pangkat"],
-            },
-            include: {
-              model: Perangkat_Daerah,
-              attributes: ["nama_opd"],
-            },
-          },
+              exclude: [['createdAt', 'updatedAt', 'password']]
+            }
+          }
         ],
       });
 
@@ -225,6 +228,7 @@ class NotulenController {
         });
       }
     } catch (err) {
+      console.log(err.message, '<<<<<');
       res.status(500).json({
         success: false,
         data: {
@@ -510,6 +514,41 @@ class NotulenController {
       });
     }
   };
+
+  static syncSasaran = async (req, res) => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'https://kak.madiunkota.go.id/api/skp/sasaran_kinerja_pegawai.json',
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": 'application/x-www-form-urlencoded'
+        },
+        data: {
+          nip: req.body.nip,
+          tahun: req.body.tahun
+        }
+      })
+
+      res.status(200).json({
+        success: true,
+        data: {
+          code: 200,
+          message: 'Success',
+          data: response.data
+        }
+      })
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        data: {
+          code: 500,
+          message: 'Internal server error',
+          data: err
+        }
+      })
+    }
+  }
 }
 
 module.exports = NotulenController;

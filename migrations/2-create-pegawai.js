@@ -38,6 +38,9 @@ module.exports = {
       role: {
         type: Sequelize.INTEGER
       },
+      status: {
+        type: Sequelize.INTEGER
+      },
       kode_opd: {
         type: Sequelize.STRING,
         allowNull: false,

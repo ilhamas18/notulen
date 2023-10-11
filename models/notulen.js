@@ -41,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     kode_opd: DataTypes.STRING,
     nip_pegawai: DataTypes.STRING,
     nip_atasan: DataTypes.STRING,
+    id_sasaran: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Notulen',

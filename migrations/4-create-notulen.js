@@ -115,6 +115,16 @@ module.exports = {
           },
         },
       },
+      id_sasaran: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Harap masukkan sasaran",
+          },
+        },
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

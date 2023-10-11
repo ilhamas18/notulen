@@ -146,6 +146,7 @@ class PegawaiController {
   }
 
   static getOnePegawai = async (req, res) => {
+    console.log(req.params);
     try {
       const response = await Pegawai.findOne({
         where: { nip: req.params.nip },
@@ -274,7 +275,7 @@ class PegawaiController {
         pangkat: req.body.pangkat,
         nama_pangkat: req.body.nama_pangkat,
         jabatan: req.body.jabatan,
-        role: 1,
+        role: req.body.role,
         kode_opd: req.body.kode_opd,
       }
 

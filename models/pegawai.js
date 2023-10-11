@@ -26,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
     nama_pangkat: DataTypes.STRING,
     jabatan: DataTypes.STRING,
     role: DataTypes.STRING,
-    kode_opd: DataTypes.STRING
+    kode_opd: DataTypes.STRING,
+    status: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Pegawai',
