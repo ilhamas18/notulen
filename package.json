@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cross-env NODE_ENV=development npx nodemon bin/http.js",
+    "prod": "cross-env NODE_ENV=production npx nodemon bin/http.js",
     "build": "npx nodemon bin/http.js"
   },
   "author": "Ilham Akbar Syahputra",
