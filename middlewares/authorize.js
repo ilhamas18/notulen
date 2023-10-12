@@ -2,7 +2,7 @@ const { Pegawai } = require('../models');
 
 const authorize = async (req, res, next) => {
   try {
-    const data = await Pegawai.findOne({ where: { id: +req.decoded.id }})
+    const data = await Pegawai.findOne({ where: { nip: req.decoded.nip } })
 
     if (!data) {
       res.status(404).json({
@@ -13,8 +13,8 @@ const authorize = async (req, res, next) => {
           data: null
         }
       })
-    } 
-  
+    }
+
     if (+req.params.id != data.dataValues.id) {
       res.status(401).json({
         success: false,
@@ -39,7 +39,7 @@ const authorize = async (req, res, next) => {
 
 const authorizeAdmin = async (req, res, next) => {
   try {
-    const data = await Pegawai.findOne({ where: { id: +req.decoded.id }})
+    const data = await Pegawai.findOne({ where: { nip: req.decoded.nip } })
 
     if (!data) {
       res.status(404).json({
@@ -50,7 +50,7 @@ const authorizeAdmin = async (req, res, next) => {
           data: null
         }
       })
-    } 
+    }
 
     if (data.role != 1) {
       res.status(401).json({
@@ -77,7 +77,7 @@ const authorizeAdmin = async (req, res, next) => {
 
 const authorizeAdminOPD = async (req, res, next) => {
   try {
-    const data = await Pegawai.findOne({ where: { id: +req.decoded.id }})
+    const data = await Pegawai.findOne({ where: { nip: req.decoded.nip } })
 
     if (!data) {
       res.status(404).json({
@@ -88,7 +88,7 @@ const authorizeAdminOPD = async (req, res, next) => {
           data: null
         }
       })
-    } 
+    }
 
     if (data.role != 2) {
       res.status(401).json({
@@ -113,9 +113,9 @@ const authorizeAdminOPD = async (req, res, next) => {
   }
 }
 
-const authorizeVerifikator = async (req, res, next) => {
+const authorizeAdminOrAdminOPD = async (req, res, next) => {
   try {
-    const data = await Pegawai.findOne({ where: { id: +req.decoded.id }})
+    const data = await Pegawai.findOne({ where: { nip: req.decoded.nip } })
 
     if (!data) {
       res.status(404).json({
@@ -126,7 +126,45 @@ const authorizeVerifikator = async (req, res, next) => {
           data: null
         }
       })
-    } 
+    }
+
+    if (data.role != 1 || data.role != 2) {
+      res.status(401).json({
+        success: false,
+        data: {
+          code: 404,
+          message: 'Unauthorize as Admin OPD',
+          data: null
+        }
+      })
+    }
+    next();
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      data: {
+        code: 500,
+        message: 'Trouble connection',
+        data: null
+      }
+    })
+  }
+}
+
+const authorizeVerifikator = async (req, res, next) => {
+  try {
+    const data = await Pegawai.findOne({ where: { nip: req.decoded.nip } })
+
+    if (!data) {
+      res.status(404).json({
+        success: false,
+        data: {
+          code: 404,
+          message: "User not found",
+          data: null
+        }
+      })
+    }
 
     if (data.role != 3) {
       res.status(401).json({
@@ -153,7 +191,7 @@ const authorizeVerifikator = async (req, res, next) => {
 
 const authorizeUser = async (req, res, next) => {
   try {
-    const data = await Pegawai.findOne({ where: { id: +req.decoded.id }})
+    const data = await Pegawai.findOne({ where: { nip: req.decoded.nip } });
 
     if (!data) {
       res.status(404).json({
@@ -164,7 +202,7 @@ const authorizeUser = async (req, res, next) => {
           data: null
         }
       })
-    } 
+    }
 
     if (data.role != 4) {
       res.status(401).json({
@@ -189,4 +227,11 @@ const authorizeUser = async (req, res, next) => {
   }
 }
 
-module.exports = { authorize, authorizeAdmin, authorizeAdminOPD, authorizeVerifikator, authorizeUser };
+module.exports = {
+  authorize,
+  authorizeAdmin,
+  authorizeAdminOPD,
+  authorizeAdminOrAdminOPD,
+  authorizeVerifikator,
+  authorizeUser
+};

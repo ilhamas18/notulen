@@ -7,10 +7,10 @@ const authenticate = async (req, res, next) => {
     const token = headerToken.replace(/^Bearer\s+/i, "");
 
     const decoded = verifyToken(token);
-  
+
     const user = await Pegawai.findOne({
       where: {
-        id: decoded.id
+        nip: decoded.nip
       }
     })
 
@@ -37,15 +37,17 @@ const authenticate = async (req, res, next) => {
           data: null
         }
       })
-    } else
+    } else {
+
       res.status(500).json({
         success: false,
         data: {
           code: 500,
           message: 'Trouble network',
-          data: err
+          data: err.message
         }
       })
+    }
   }
 }
 

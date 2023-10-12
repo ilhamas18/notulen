@@ -4,7 +4,7 @@ class TaggingController {
   static getAllTagging = async (req, res) => {
     try {
       const response = await Tagging.findAll()
-      console.log(response);
+
       res.status(200).json({
         success: true,
         data: {
@@ -30,7 +30,7 @@ class TaggingController {
       const payload = {
         nama_tagging: req.body.nama_tagging
       }
-     
+
       const response = await Tagging.create(payload);
 
       res.status(201).json({

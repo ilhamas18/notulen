@@ -12,7 +12,7 @@ class OPDController {
           "Accept": 'application/json'
         },
       })
-      
+
       if (responseOPD.data.results.length != 0) {
         responseOPD.data.results.map(el => {
           Perangkat_Daerah.findOrCreate({
@@ -49,7 +49,6 @@ class OPDController {
         })
       }
     } catch (err) {
-      console.log(err);
       res.status(500).json({
         success: false,
         data: {
@@ -63,19 +62,20 @@ class OPDController {
 
   static getAllOPD = async (req, res) => {
     try {
-     const response = await Perangkat_Daerah.findAll({
-      order: [['updatedAt', 'DESC']]
-     })
-     
-     res.status(200).json({
-       success: true,
-       data: {
-         code: 200,
-         message: 'Success',
-         data: response
-       }
-     })
+      const response = await Perangkat_Daerah.findAll({
+        order: [['createdAt', 'DESC']]
+      })
+
+      res.status(200).json({
+        success: true,
+        data: {
+          code: 200,
+          message: 'Success',
+          data: response
+        }
+      })
     } catch (err) {
+      console.log(err);
       res.status(500).json({
         success: false,
         data: {
@@ -132,7 +132,7 @@ class OPDController {
           kode_opd: req.params.kode_opd
         }
       });
-     
+
       if (response[0] == 0) {
         res.status(404).json({
           success: false,
