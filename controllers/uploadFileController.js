@@ -1,7 +1,6 @@
 class UploadFileController {
   static uploadSuratUndangan = async (req, res) => {
     try {
-      console.log(req.file.path, '>>>>>>>');
       res.status(201).json({
         success: true,
         data: {
