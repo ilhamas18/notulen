@@ -3,6 +3,10 @@ const Sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const aws = require("aws-sdk");
 const axios = require('axios');
+const fs = require('fs')
+const { promisify } = require('util')
+
+const unlinkAsync = promisify(fs.unlink)
 
 class NotulenController {
   static getAllNotulen = async (req, res) => {
@@ -58,6 +62,20 @@ class NotulenController {
             bulan: req.params.bulan,
             tahun: req.params.tahun,
           },
+          include: [
+            {
+              model: Perangkat_Daerah,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Pegawai,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt', 'password']]
+              }
+            }
+          ]
         });
 
         if (response === null) {
@@ -86,6 +104,20 @@ class NotulenController {
             bulan: req.params.bulan,
             tahun: req.params.tahun,
           },
+          include: [
+            {
+              model: Perangkat_Daerah,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Pegawai,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt', 'password']]
+              }
+            }
+          ],
           order: [["createdAt", "DESC"]],
         });
         if (response === null) {
@@ -116,6 +148,20 @@ class NotulenController {
             bulan: req.params.bulan,
             tahun: req.params.tahun,
           },
+          include: [
+            {
+              model: Perangkat_Daerah,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Pegawai,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt', 'password']]
+              }
+            }
+          ]
         })
 
         if (response === null) {
@@ -228,7 +274,6 @@ class NotulenController {
         });
       }
     } catch (err) {
-      console.log(err.message, '<<<<<');
       res.status(500).json({
         success: false,
         data: {
@@ -241,27 +286,11 @@ class NotulenController {
   };
 
   static downloadFile = async (req, res) => {
-    res.download(req.params.filename)
+    res.download(req.query.pathname)
   };
 
   static deleteFile = async (req, res) => {
-    const s3 = new aws.S3();
-    try {
-      const filename = req.params.filename;
-      await s3
-        .deleteObject({ Bucket: "basarnas-bucket", Key: filename })
-        .promise();
-      res.send("File Deleted Successfully");
-    } catch (err) {
-      res.status(500).json({
-        success: false,
-        data: {
-          code: 500,
-          message: "Internal server error",
-          data: err.message,
-        },
-      });
-    }
+    await unlinkAsync(req.query.pathname);
   };
 
   static addNotulen = async (req, res) => {
@@ -401,25 +430,36 @@ class NotulenController {
         nip_pegawai: req.body.nip_pegawai,
         nip_atasan: req.body.nip_atasan,
       };
-      const response = await Notulen.update(payload, {
-        where: { id: +req.params.id },
-      })
 
-      if (response[0] == 0) {
-        res.status(404).json({
+      if (req.body.status === "Disetujui") {
+        const response = await Notulen.update(payload, {
+          where: { id: +req.params.id },
+        })
+
+        if (response[0] == 0) {
+          res.status(404).json({
+            success: false,
+            data: {
+              code: 404,
+              message: "ID Komponen tidak ditemukan!",
+            },
+          });
+        } else {
+          res.status(200).json({
+            success: true,
+            data: {
+              code: 200,
+              message: "Berhasil update data pegawai",
+              data: response,
+            },
+          });
+        }
+      } else {
+        res.status(400).json({
           success: false,
           data: {
-            code: 404,
-            message: "ID Komponen tidak ditemukan!",
-          },
-        });
-      } else {
-        res.status(200).json({
-          success: true,
-          data: {
-            code: 200,
-            message: "Berhasil update data pegawai",
-            data: response,
+            code: 400,
+            message: "Tidak bisa mengedit notulen yang sudah disetujui!",
           },
         });
       }
