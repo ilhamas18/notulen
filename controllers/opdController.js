@@ -12,41 +12,28 @@ class OPDController {
           "Accept": 'application/json'
         },
       })
-
       if (responseOPD.data.results.length != 0) {
-        responseOPD.data.results.map(el => {
-          Perangkat_Daerah.findOrCreate({
+        const opdData = responseOPD.data.results.map(async el => {
+          const created = await Perangkat_Daerah.findOrCreate({
             where: {
               kode_opd: el.kode_opd,
             },
             defaults: {
               kode_opd: el.kode_opd,
               nama_opd: el.nama_opd,
-              createdAt: new Date(),
-              updatedAt: new Date()
             }
           })
-            .then((data) => {
-              res.status(200).json({
-                success: false,
-                data: {
-                  code: 200,
-                  message: 'Success',
-                  data: data
-                }
-              })
-            })
-            .catch(err => {
-              res.status(500).json({
-                success: false,
-                data: {
-                  code: 500,
-                  message: 'jaringan server error',
-                  data: err.message
-                }
-              })
-            })
         })
+        if (opdData.length != 0) {
+          res.status(200).json({
+            success: true,
+            data: {
+              code: 200,
+              message: 'Success',
+              data: opdData
+            }
+          })
+        }
       }
     } catch (err) {
       res.status(500).json({
