@@ -312,6 +312,7 @@ class NotulenController {
         hari: req.body.hari,
         bulan: req.body.bulan,
         tahun: req.body.tahun,
+        id_sasaran: req.body.id_sasaran,
         link_img_surat_undangan: req.body.link_img_surat_undangan,
         link_img_daftar_hadir: req.body.link_img_daftar_hadir,
         link_img_spj: req.body.link_img_spj,
@@ -332,6 +333,7 @@ class NotulenController {
         },
       });
     } catch (err) {
+      console.log(err.message, '<<<<<');
       if (err.name === "SequelizeDatabaseError") {
         res.status(400).json({
           success: false,

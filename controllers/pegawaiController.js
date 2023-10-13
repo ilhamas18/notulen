@@ -146,7 +146,6 @@ class PegawaiController {
   }
 
   static getOnePegawai = async (req, res) => {
-    console.log(req.params);
     try {
       const response = await Pegawai.findOne({
         where: { nip: req.params.nip },
@@ -290,6 +289,64 @@ class PegawaiController {
         }
       })
     } catch (err) {
+      if (err.name === 'SequelizeDatabaseError') {
+        res.status(400).json({
+          success: false,
+          data: {
+            code: 400,
+            message: 'Periksa kembali data Anda!',
+            data: err.message
+          }
+        })
+      } else if (err.name === 'SequelizeUniqueConstraintError') {
+        res.status(400).json({
+          success: false,
+          data: {
+            code: 400,
+            message: 'NIK sudah terdaftar'
+          }
+        })
+      } else {
+        res.status(500).json({
+          success: false,
+          data: {
+            code: 500,
+            message: 'Internal server error',
+            data: err
+          }
+        })
+      }
+    }
+  }
+
+  static updatePegawai = async (req, res) => {
+    try {
+      const payload = {
+        nama: req.body.nama,
+        nip: req.body.nip,
+        password: req.body.password,
+        pangkat: req.body.pangkat,
+        nama_pangkat: req.body.nama_pangkat,
+        jabatan: req.body.jabatan,
+        role: req.body.role,
+        status: req.body.status,
+        kode_opd: req.body.kode_opd,
+      }
+
+      const response = await Pegawai.update(payload, {
+        where: { nip: req.params.nip }
+      });
+
+      res.status(201).json({
+        success: true,
+        data: {
+          code: 201,
+          message: 'Data tagging berhasil ditambahkan',
+          data: response
+        }
+      })
+    } catch (err) {
+      console.log(err, '>>>');
       if (err.name === 'SequelizeDatabaseError') {
         res.status(400).json({
           success: false,
