@@ -10,6 +10,8 @@ services:
       - '54321:5432'
     volumes:
       - database-volume:/var/lib/postgresql/data
+    ports:
+      - '54321:5432'
     restart: on-failure
   backend:
     build: .
