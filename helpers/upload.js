@@ -1,6 +1,8 @@
 const multer = require('multer');
 const path = require('path');
-const uploadFolder = path.join(__dirname, "Videos"); // use a variable to hold the value of upload folder
+const uploadFolder = path.join('uploads');
+console.log(uploadFolder, '>>>>> pathname');
+// const uploadFolder = path.join(__dirname, "Videos"); // use a variable to hold the value of upload folder
 
 const storage = multer.diskStorage({
   destination: uploadFolder, // use it when upload

@@ -333,7 +333,6 @@ class NotulenController {
         },
       });
     } catch (err) {
-      console.log(err.message, '<<<<<');
       if (err.name === "SequelizeDatabaseError") {
         res.status(400).json({
           success: false,
@@ -433,7 +432,7 @@ class NotulenController {
         nip_atasan: req.body.nip_atasan,
       };
 
-      if (req.body.status === "Disetujui") {
+      if (req.body.status !== "Disetujui") {
         const response = await Notulen.update(payload, {
           where: { id: +req.params.id },
         })
