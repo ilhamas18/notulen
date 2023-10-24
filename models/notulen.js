@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
       Notulen.belongsTo(models.Perangkat_Daerah, { foreignKey: 'kode_opd' });
       Notulen.belongsTo(models.Pegawai, { foreignKey: 'nip_pegawai' });
       Notulen.hasMany(models.File_Pendukung, { foreignKey: 'id_notulen' });
+      Notulen.belongsToMany(models.Sasaran, {
+        through: models.Sasaran_Notulen,
+        foreignKey: 'id_notulen',
+        // otherKey: 'id_sasaran'
+      });
     }
   }
   Notulen.init({
@@ -37,11 +42,11 @@ module.exports = (sequelize, DataTypes) => {
     link_img_surat_undangan: DataTypes.JSON,
     link_img_spj: DataTypes.JSON,
     link_img_pendukung: DataTypes.JSON,
+    signature: DataTypes.STRING,
     keterangan: DataTypes.STRING,
     kode_opd: DataTypes.STRING,
     nip_pegawai: DataTypes.STRING,
     nip_atasan: DataTypes.STRING,
-    id_sasaran: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Notulen',

@@ -2,31 +2,40 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Taggings', {
+    await queryInterface.createTable('Sasaran_Notulens', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      nama_tagging: {
-        type: Sequelize.STRING
-      },
-      kode_opd: {
+      id_sasaran: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
             args: true,
-            msg: "Harap masukkan OPD terkait!",
+            msg: "Harap masukkan sasaran",
           },
         },
         references: {
-          model: 'Perangkat_Daerahs',
-          key: 'kode_opd',
+          model: "Sasarans",
+          key: "id_sasaran",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
+      },
+      id_notulen: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Harap masukkan notulen",
+          },
+        },
+        references: {
+          model: "Notulens",
+          key: "id",
+        },
       },
       createdAt: {
         allowNull: false,
@@ -39,6 +48,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Taggings');
+    await queryInterface.dropTable('Sasaran_Notulens');
   }
 };

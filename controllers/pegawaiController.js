@@ -391,40 +391,40 @@ class PegawaiController {
             message: 'NIP tidak ditemukan'
           }
         })
-      }
+      } else {
+        const comparedPassword = comparePassword(req.body.password, user.dataValues.password);
 
-      const comparedPassword = comparePassword(req.body.password, user.dataValues.password);
+        if (!comparedPassword) {
+          res.status(400).json({
+            success: false,
+            data: {
+              code: 400,
+              message: 'Password yang Anda masukkan salah'
+            }
+          })
+        } else {
+          const access_token = generateToken({
+            id: user.id,
+            nama: user.nama,
+            nip: user.nip,
+            pangkat: user.pangkat,
+            namaPangkat: user.nama_pangkat,
+            posisi: user.jabatan,
+            role: user.role,
+          })
 
-      if (!comparedPassword) {
-        res.status(400).json({
-          success: false,
-          data: {
-            code: 400,
-            message: 'Password yang Anda masukkan salah'
-          }
-        })
-      }
-
-      const access_token = generateToken({
-        id: user.id,
-        nama: user.nama,
-        nip: user.nip,
-        pangkat: user.pangkat,
-        namaPangkat: user.nama_pangkat,
-        posisi: user.jabatan,
-        role: user.role,
-      })
-
-      res.status(200).json({
-        success: true,
-        data: {
-          code: 200,
-          message: "Success",
-          data: {
-            access_token
-          }
+          res.status(200).json({
+            success: true,
+            data: {
+              code: 200,
+              message: "Success",
+              data: {
+                access_token
+              }
+            }
+          })
         }
-      })
+      }
     } catch (err) {
       res.status(500).json({
         success: false,

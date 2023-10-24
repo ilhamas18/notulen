@@ -1,9 +1,9 @@
-const { Notulen, Pegawai, Perangkat_Daerah } = require("../models");
+const { Notulen, Pegawai, Perangkat_Daerah, Sasaran, Sasaran_Notulen } = require("../models");
 const Sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const aws = require("aws-sdk");
 const axios = require('axios');
-const fs = require('fs')
+const fs = require('fs');
 const { promisify } = require('util')
 
 const unlinkAsync = promisify(fs.unlink)
@@ -58,10 +58,6 @@ class NotulenController {
       if (req.decoded.role == 1) {
         const response = await Notulen.findAll({
           order: [["createdAt", "DESC"]],
-          where: {
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
-          },
           include: [
             {
               model: Perangkat_Daerah,
@@ -74,8 +70,18 @@ class NotulenController {
               attributes: {
                 exclude: [['createdAt', 'updatedAt', 'password']]
               }
-            }
-          ]
+            },
+            {
+              model: Sasaran,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+          ],
+          where: {
+            bulan: req.params.bulan,
+            tahun: req.params.tahun,
+          },
         });
 
         if (response === null) {
@@ -116,7 +122,13 @@ class NotulenController {
               attributes: {
                 exclude: [['createdAt', 'updatedAt', 'password']]
               }
-            }
+            },
+            {
+              model: Sasaran,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
           ],
           order: [["createdAt", "DESC"]],
         });
@@ -160,8 +172,14 @@ class NotulenController {
               attributes: {
                 exclude: [['createdAt', 'updatedAt', 'password']]
               }
-            }
-          ]
+            },
+            {
+              model: Sasaran,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+          ],
         })
 
         if (response === null) {
@@ -185,6 +203,26 @@ class NotulenController {
         }
       } else if (req.decoded.role == 4) {
         const response = await Notulen.findAll({
+          include: [
+            {
+              model: Perangkat_Daerah,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Pegawai,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt', 'password']]
+              }
+            },
+            {
+              model: Sasaran,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+          ],
           where: {
             nip_pegawai: req.decoded.nip,
             bulan: req.params.bulan,
@@ -250,7 +288,13 @@ class NotulenController {
             attributes: {
               exclude: [['createdAt', 'updatedAt', 'password']]
             }
-          }
+          },
+          {
+            model: Sasaran,
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            }
+          },
         ],
       });
 
@@ -295,43 +339,54 @@ class NotulenController {
 
   static addNotulen = async (req, res) => {
     try {
-      const payload = {
-        tagging: req.body.tagging,
-        tanggal: req.body.tanggal,
-        waktu: req.body.waktu,
-        pendahuluan: req.body.pendahuluan,
-        pimpinan_rapat: req.body.pimpinan_rapat,
-        peserta_rapat: req.body.peserta_rapat,
-        isi_rapat: req.body.isi_rapat,
-        tindak_lanjut: req.body.tindak_lanjut,
-        lokasi: req.body.lokasi,
-        acara: req.body.acara,
-        pelapor: req.body.pelapor,
-        atasan: req.body.atasan,
-        status: req.body.status,
-        hari: req.body.hari,
-        bulan: req.body.bulan,
-        tahun: req.body.tahun,
-        id_sasaran: req.body.id_sasaran,
-        link_img_surat_undangan: req.body.link_img_surat_undangan,
-        link_img_daftar_hadir: req.body.link_img_daftar_hadir,
-        link_img_spj: req.body.link_img_spj,
-        link_img_foto: req.body.link_img_foto,
-        link_img_pendukung: req.body.link_img_pendukung,
-        kode_opd: req.body.kode_opd,
-        nip_pegawai: req.body.nip_pegawai,
-        nip_atasan: req.body.nip_atasan,
-      };
-      const response = await Notulen.create(payload);
+      if (req.decoded.role == 3 || req.decoded.role == 4) {
+        const payload = {
+          tagging: req.body.tagging,
+          tanggal: req.body.tanggal,
+          waktu: req.body.waktu,
+          pendahuluan: req.body.pendahuluan,
+          pimpinan_rapat: req.body.pimpinan_rapat,
+          peserta_rapat: req.body.peserta_rapat,
+          isi_rapat: req.body.isi_rapat,
+          tindak_lanjut: req.body.tindak_lanjut,
+          lokasi: req.body.lokasi,
+          acara: req.body.acara,
+          atasan: req.body.atasan,
+          status: req.body.status,
+          hari: req.body.hari,
+          bulan: req.body.bulan,
+          tahun: req.body.tahun,
+          id_sasaran: req.body.id_sasaran,
+          link_img_surat_undangan: req.body.link_img_surat_undangan,
+          link_img_daftar_hadir: req.body.link_img_daftar_hadir,
+          link_img_spj: req.body.link_img_spj,
+          link_img_foto: req.body.link_img_foto,
+          link_img_pendukung: req.body.link_img_pendukung,
+          signature: req.body.signature,
+          kode_opd: req.body.kode_opd,
+          nip_pegawai: req.body.nip_pegawai,
+          nip_atasan: req.body.nip_atasan,
+        };
+        const response = await Notulen.create(payload);
 
-      res.status(201).json({
-        success: true,
-        data: {
-          code: 201,
-          message: "Data notulen berhasil ditambahkan",
-          data: response,
-        },
-      });
+        res.status(201).json({
+          success: true,
+          data: {
+            code: 201,
+            message: "Data notulen berhasil ditambahkan",
+            data: response,
+          },
+        });
+      } else {
+        res.status(401).json({
+          success: false,
+          data: {
+            code: 404,
+            message: 'Unauthorize as Admin OPD',
+            data: null
+          }
+        })
+      }
     } catch (err) {
       if (err.name === "SequelizeDatabaseError") {
         res.status(400).json({
@@ -549,6 +604,112 @@ class NotulenController {
           data: err
         }
       })
+    }
+  }
+
+  static addSasaran = (req, res) => {
+    if (req.decoded.role == 3 || req.decoded.role == 4) {
+      req.body.map(el => {
+        Sasaran.findOrCreate({
+          where: {
+            id_sasaran: el.id_sasaran
+          },
+          defaults: {
+            id_sasaran: el.id_sasaran,
+            sasaran: el.sasaran,
+            nama_pembuat: el.nama_pembuat
+          }
+        })
+          .then(async () => {
+            try {
+              const payload = {
+                id_sasaran: el.id_sasaran,
+                id_notulen: el.id_notulen
+              }
+              const response = await Sasaran_Notulen.create(payload);
+
+              res.status(200).json({
+                success: true,
+                data: {
+                  code: 200,
+                  message: 'Success',
+                  data: response.data
+                }
+              })
+            } catch (err) {
+              res.status(500).json({
+                success: false,
+                data: {
+                  code: 500,
+                  message: 'Internal server error',
+                  data: err
+                }
+              })
+            }
+          })
+          .catch(err => {
+            res.status(500).json({
+              success: false,
+              data: {
+                code: 500,
+                message: 'Internal server error',
+                data: err
+              }
+            })
+          })
+      })
+    } else {
+      res.status(401).json({
+        success: false,
+        data: {
+          code: 401,
+          message: "Unauthorize",
+          data: null
+        }
+      })
+    }
+  }
+
+  static deleteSasaran = (req, res) => {
+    if (req.decoded.role == 3 || req.decoded.role == 4) {
+      Sasaran_Notulen.destroy({
+        where: { id_sasaran: req.body.id_sasaran }
+      })
+        .then(async () => {
+          try {
+            const response = Sasaran.destroy({
+              where: { id_sasaran: req.body.id_sasaran }
+            })
+
+            res.status(200).json({
+              success: true,
+              data: {
+                code: 200,
+                message: 'Success',
+                data: response.data
+              }
+            })
+          } catch (err) {
+            res.status(500).json({
+              success: false,
+              data: {
+                code: 500,
+                message: 'Internal server error',
+                data: err
+              }
+            })
+          }
+        })
+        .catch(err => {
+          res.status(500).json({
+            success: false,
+            data: {
+              code: 500,
+              message: 'Internal server error',
+              data: err
+            }
+          })
+        })
     }
   }
 }

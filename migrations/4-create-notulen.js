@@ -39,9 +39,6 @@ module.exports = {
       acara: {
         type: Sequelize.STRING,
       },
-      pelapor: {
-        type: Sequelize.JSON,
-      },
       atasan: {
         type: Sequelize.JSON,
       },
@@ -71,6 +68,9 @@ module.exports = {
       },
       link_img_pendukung: {
         type: Sequelize.JSON,
+      },
+      signature: {
+        type: Sequelize.STRING,
       },
       keterangan: {
         type: Sequelize.STRING,
@@ -123,6 +123,10 @@ module.exports = {
             args: true,
             msg: "Harap masukkan sasaran",
           },
+        },
+        references: {
+          model: "Sasarans",
+          key: "id_sasaran",
         },
       },
       createdAt: {
