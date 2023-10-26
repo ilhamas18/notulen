@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     pangkat: DataTypes.STRING,
     nama_pangkat: DataTypes.STRING,
     jabatan: DataTypes.STRING,
+    eselon: DataTypes.STRING,
     role: DataTypes.STRING,
     kode_opd: DataTypes.STRING,
     status: DataTypes.STRING

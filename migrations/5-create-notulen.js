@@ -9,9 +9,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      tagging: {
-        type: Sequelize.JSON,
-      },
       tanggal: {
         type: Sequelize.JSON,
       },
@@ -70,7 +67,10 @@ module.exports = {
         type: Sequelize.JSON,
       },
       signature: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(10000)
+      },
+      signature_atasan: {
+        type: Sequelize.STRING(10000)
       },
       keterangan: {
         type: Sequelize.STRING,
@@ -113,20 +113,6 @@ module.exports = {
             args: true,
             msg: "Harap masukkan pegawai terkait!",
           },
-        },
-      },
-      id_sasaran: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: {
-            args: true,
-            msg: "Harap masukkan sasaran",
-          },
-        },
-        references: {
-          model: "Sasarans",
-          key: "id_sasaran",
         },
       },
       createdAt: {

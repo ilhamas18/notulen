@@ -35,6 +35,9 @@ module.exports = {
       jabatan: {
         type: Sequelize.STRING
       },
+      eselon: {
+        type: Sequelize.STRING
+      },
       role: {
         type: Sequelize.INTEGER
       },

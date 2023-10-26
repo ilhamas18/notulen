@@ -1,10 +1,26 @@
-const { Tagging } = require('../models');
+const { Tagging, Notulen, Tagging_Notulen, Perangkat_Daerah } = require('../models');
 
 class TaggingController {
   static getAllTagging = async (req, res) => {
     try {
       if (req.decoded.role == 1) {
-        const response = await Tagging.findAll()
+        const response = await Tagging.findAll({
+          where: { kode_opd: '1234567890' },
+          include: [
+            {
+              model: Perangkat_Daerah,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Notulen,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+          ]
+        })
 
         res.status(200).json({
           success: true,
@@ -16,9 +32,17 @@ class TaggingController {
         })
       } else {
         const response = await Tagging.findAll({
-          where: { kode_opd: req.params.kode_opd }
+          where: { kode_opd: req.params.kode_opd },
+          include: [
+            {
+              model: Notulen,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+          ]
         })
-        console.log(req.params.kode_opd, '<<< kode opd');
+
         if (response === null) {
           res.status(404).json({
             success: false,
@@ -51,10 +75,51 @@ class TaggingController {
     }
   }
 
+  // static getSelectNotulen = async (req, res) => {
+  //   try {
+  //     const response = await Tagging.findAll({
+  //       where: { kode_opd: '1234567890' },
+  //       include: [
+  //         {
+  //           model: Perangkat_Daerah,
+  //           attributes: {
+  //             exclude: [['createdAt', 'updatedAt']]
+  //           }
+  //         },
+  //         {
+  //           model: Notulen,
+  //           attributes: {
+  //             exclude: [['createdAt', 'updatedAt']]
+  //           }
+  //         },
+  //       ]
+  //     })
+
+  //     res.status(200).json({
+  //       success: true,
+  //       data: {
+  //         code: 200,
+  //         message: 'Success',
+  //         data: response
+  //       }
+  //     })
+  //   } catch (err) {
+
+  //   }
+  // }
+
   static getOneTagging = async (req, res) => {
     try {
       const response = await Tagging.findOne({
-        where: { id: +req.params.id }
+        where: { id: +req.params.id },
+        include: [
+          {
+            model: Notulen,
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            }
+          },
+        ]
       })
 
       if (response === null) {
@@ -178,29 +243,46 @@ class TaggingController {
 
   static deleteTagging = async (req, res) => {
     try {
-      const response = await Tagging.destroy({
-        where: { id: +req.params.id },
+      Tagging_Notulen.destroy({
+        where: { id_tagging: +req.params.id },
         returning: true
       })
+        .then(async () => {
+          try {
+            const response = await Tagging.destroy({
+              where: { id: +req.params.id },
+              returning: true
+            })
 
-      if (response == 1) {
-        res.status(200).json({
-          success: true,
-          data: {
-            code: 200,
-            message: 'Berhasil hapus data Program',
-            data: response
+            if (response == 1) {
+              res.status(200).json({
+                success: true,
+                data: {
+                  code: 200,
+                  message: 'Berhasil hapus data Tagging',
+                  data: response
+                }
+              })
+            } else {
+              res.status(404).json({
+                success: false,
+                data: {
+                  code: 404,
+                  message: 'ID Tagging tidak ditemukan!'
+                }
+              })
+            }
+          } catch (err) {
+            res.status(500).json({
+              success: false,
+              data: {
+                code: 500,
+                message: 'Internal server error',
+                data: err
+              }
+            })
           }
         })
-      } else {
-        res.status(404).json({
-          success: false,
-          data: {
-            code: 404,
-            message: 'ID Program tidak ditemukan!'
-          }
-        })
-      }
     } catch (err) {
       res.status(500).json({
         success: false,

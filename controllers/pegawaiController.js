@@ -324,7 +324,7 @@ class PegawaiController {
       const payload = {
         nama: req.body.nama,
         nip: req.body.nip,
-        password: req.body.password,
+        password: hashPassword(req.body.password),
         pangkat: req.body.pangkat,
         nama_pangkat: req.body.nama_pangkat,
         jabatan: req.body.jabatan,
@@ -431,7 +431,7 @@ class PegawaiController {
         data: {
           code: 500,
           message: "Internet server error",
-          data: err
+          data: err.message
         }
       })
     }

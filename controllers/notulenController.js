@@ -1,4 +1,4 @@
-const { Notulen, Pegawai, Perangkat_Daerah, Sasaran, Sasaran_Notulen } = require("../models");
+const { Notulen, Pegawai, Perangkat_Daerah, Sasaran, Sasaran_Notulen, Tagging, Tagging_Notulen } = require("../models");
 const Sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const aws = require("aws-sdk");
@@ -77,6 +77,12 @@ class NotulenController {
                 exclude: [['createdAt', 'updatedAt']]
               }
             },
+            {
+              model: Tagging,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
           ],
           where: {
             bulan: req.params.bulan,
@@ -125,6 +131,12 @@ class NotulenController {
             },
             {
               model: Sasaran,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Tagging,
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               }
@@ -179,6 +191,12 @@ class NotulenController {
                 exclude: [['createdAt', 'updatedAt']]
               }
             },
+            {
+              model: Tagging,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
           ],
         })
 
@@ -218,6 +236,12 @@ class NotulenController {
             },
             {
               model: Sasaran,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Tagging,
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               }
@@ -291,6 +315,12 @@ class NotulenController {
           },
           {
             model: Sasaran,
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            }
+          },
+          {
+            model: Tagging,
             attributes: {
               exclude: [['createdAt', 'updatedAt']]
             }
@@ -418,46 +448,6 @@ class NotulenController {
     }
   };
 
-  static addTagging = async (req, res) => {
-    try {
-      const payload = {
-        tagging: req.body.tagging,
-      };
-
-      const response = await Notulen.update(payload, {
-        where: { id: +req.params.id },
-      });
-
-      if (response[0] == 0) {
-        res.status(404).json({
-          success: false,
-          data: {
-            code: 404,
-            message: "ID notulen tidak ditemukan!",
-          },
-        });
-      } else {
-        res.status(200).json({
-          success: true,
-          data: {
-            code: 200,
-            message: "Berhasil update data pegawai",
-            data: response,
-          },
-        });
-      }
-    } catch (err) {
-      res.status(500).json({
-        success: false,
-        data: {
-          code: 500,
-          message: "Internal server error",
-          data: err,
-        },
-      });
-    }
-  };
-
   static editNotulen = async (req, res) => {
     try {
       const payload = {
@@ -471,17 +461,18 @@ class NotulenController {
         tindak_lanjut: req.body.tindak_lanjut,
         lokasi: req.body.lokasi,
         acara: req.body.acara,
-        pelapor: req.body.pelapor,
         atasan: req.body.atasan,
         status: req.body.status,
         hari: req.body.hari,
         bulan: req.body.bulan,
         tahun: req.body.tahun,
+        id_sasaran: req.body.id_sasaran,
         link_img_surat_undangan: req.body.link_img_surat_undangan,
         link_img_daftar_hadir: req.body.link_img_daftar_hadir,
         link_img_spj: req.body.link_img_spj,
         link_img_foto: req.body.link_img_foto,
         link_img_pendukung: req.body.link_img_pendukung,
+        signature: req.body.signature,
         kode_opd: req.body.kode_opd,
         nip_pegawai: req.body.nip_pegawai,
         nip_atasan: req.body.nip_atasan,
@@ -535,13 +526,14 @@ class NotulenController {
     try {
       const payload = {
         status: req.body.status,
-        keterangan: req.body.keterangan
+        keterangan: req.body.keterangan,
+        signature_atasan: req.body.signature_atasan
       };
 
       const response = await Notulen.update(payload, {
         where: { id: +req.params.id },
       });
-
+      console.log(response, '.>>>');
       if (response[0] == 0) {
         res.status(404).json({
           success: false,
@@ -710,6 +702,75 @@ class NotulenController {
             }
           })
         })
+    }
+  }
+
+  static addTagging = async (req, res) => {
+    if (req.decoded.role == 1 || req.decoded.role == 2) {
+      req.body.map(async el => {
+        try {
+          const payload = {
+            id_notulen: el.id_notulen,
+            id_tagging: el.id_tagging
+          }
+          const response = await Tagging_Notulen.create(payload);
+
+          res.status(200).json({
+            success: true,
+            data: {
+              code: 200,
+              message: 'Success',
+              data: response.data
+            }
+          })
+        } catch (err) {
+          res.status(500).json({
+            success: false,
+            data: {
+              code: 500,
+              message: 'Internal server error',
+              data: err
+            }
+          })
+        }
+      })
+    } else {
+      res.status(401).json({
+        success: false,
+        data: {
+          code: 401,
+          message: "Unauthorize",
+          data: null
+        }
+      })
+    }
+  };
+
+  static deleteTagging = (req, res) => {
+    if (req.decoded.role == 1 || req.decoded.role == 2) {
+      try {
+        const response = Tagging_Notulen.destroy({
+          where: { id_tagging: req.body.id_tagging }
+        })
+
+        res.status(200).json({
+          success: true,
+          data: {
+            code: 200,
+            message: 'Berhasil hapus tagging',
+            data: response
+          }
+        })
+      } catch (err) {
+        res.status(500).json({
+          success: false,
+          data: {
+            code: 500,
+            message: "Internal server error",
+            data: err,
+          },
+        });
+      }
     }
   }
 }

@@ -168,6 +168,42 @@ class OPDController {
       }
     }
   }
+
+  static getMasterUrusan = async (req, res) => {
+    try {
+      const response = await axios({
+        url: 'https://kak.madiunkota.go.id/api/opd/urusan_opd',
+        method: 'post',
+        data: {},
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": 'application/json',
+        },
+      })
+      if (response.data.results.length != 0) {
+
+        const data = response.data.results
+        res.status(200).json({
+          success: true,
+          data: {
+            code: 200,
+            message: 'Success',
+            data: data
+          }
+        })
+      }
+    } catch (err) {
+      console.log(err.message, '>>>>>>>>>>>>>');
+      res.status(500).json({
+        success: false,
+        data: {
+          code: 500,
+          message: 'Internal server error',
+          data: err.message
+        }
+      })
+    }
+  }
 }
 
 module.exports = OPDController;

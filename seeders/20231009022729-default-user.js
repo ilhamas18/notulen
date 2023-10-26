@@ -19,7 +19,7 @@ module.exports = {
         {
           nama: "admin",
           nip: "123456789012345678",
-          password: hashPassword("enotulen_kota_madiun"),
+          password: hashPassword('12345678'),
           pangkat: "super_admin",
           nama_pangkat: "super_admin",
           jabatan: "super_admin",

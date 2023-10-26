@@ -16,12 +16,16 @@ module.exports = (sequelize, DataTypes) => {
       Notulen.belongsToMany(models.Sasaran, {
         through: models.Sasaran_Notulen,
         foreignKey: 'id_notulen',
-        // otherKey: 'id_sasaran'
+        otherKey: 'id_sasaran'
       });
+      Notulen.belongsToMany(models.Tagging, {
+        through: models.Tagging_Notulen,
+        foreignKey: 'id_notulen',
+        otherKey: 'id_tagging'
+      })
     }
   }
   Notulen.init({
-    tagging: DataTypes.JSON,
     tanggal: DataTypes.JSON,
     waktu: DataTypes.STRING,
     pendahuluan: DataTypes.STRING(1234),
@@ -31,7 +35,6 @@ module.exports = (sequelize, DataTypes) => {
     tindak_lanjut: DataTypes.STRING(10000),
     lokasi: DataTypes.STRING,
     acara: DataTypes.STRING,
-    pelapor: DataTypes.JSON,
     atasan: DataTypes.JSON,
     status: DataTypes.STRING,
     hari: DataTypes.STRING,
@@ -42,7 +45,8 @@ module.exports = (sequelize, DataTypes) => {
     link_img_surat_undangan: DataTypes.JSON,
     link_img_spj: DataTypes.JSON,
     link_img_pendukung: DataTypes.JSON,
-    signature: DataTypes.STRING,
+    signature: DataTypes.STRING(10000),
+    signature_atasan: DataTypes.STRING(10000),
     keterangan: DataTypes.STRING,
     kode_opd: DataTypes.STRING,
     nip_pegawai: DataTypes.STRING,
