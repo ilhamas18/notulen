@@ -7,7 +7,7 @@ const authenticate = async (req, res, next) => {
     const token = headerToken.replace(/^Bearer\s+/i, "");
 
     const decoded = verifyToken(token);
-
+    console.log(headerToken, '>>>');
     const user = await Pegawai.findOne({
       where: {
         nip: decoded.nip
@@ -38,13 +38,12 @@ const authenticate = async (req, res, next) => {
         }
       })
     } else {
-
       res.status(500).json({
         success: false,
         data: {
           code: 500,
           message: 'Trouble network',
-          data: err.message
+          data: err
         }
       })
     }

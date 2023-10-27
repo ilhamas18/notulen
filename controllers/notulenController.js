@@ -10,10 +10,19 @@ const unlinkAsync = promisify(fs.unlink)
 
 class NotulenController {
   static getAllNotulen = async (req, res) => {
+    const currentYear = new Date().getFullYear()
     try {
       if (req.decoded.role == 1) {
         const response = await Notulen.findAll({
-          order: [["createdAt", "DESC"]],
+          where: {
+            tahun: currentYear.toString()
+          },
+          include: [
+            {
+              model: Perangkat_Daerah,
+              attributes: ['nama_opd']
+            }
+          ]
         });
 
         res.status(200).json({
@@ -24,20 +33,117 @@ class NotulenController {
             data: response,
           },
         });
+      } else if (req.decoded.role == 2) {
+        const response = await Notulen.findAll({
+          where: {
+            kode_opd: req.params.kode_opd,
+            tahun: currentYear.toString()
+          },
+          include: [
+            {
+              model: Perangkat_Daerah,
+              attributes: ['nama_opd']
+            },
+            {
+              model: Pegawai,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt', 'password']]
+              }
+            },
+          ],
+          order: [["createdAt", "DESC"]],
+        })
+
+        res.status(200).json({
+          success: true,
+          data: {
+            code: 200,
+            message: "Success",
+            data: response,
+          },
+        });
+      } else if (req.decoded.role == 3) {
+        Notulen.findAll({
+          where: {
+            kode_opd: req.params.kode_opd,
+            nip_atasan: req.decoded.nip,
+            tahun: currentYear.toString()
+          },
+          include: [
+            {
+              model: Perangkat_Daerah,
+              attributes: ['nama_opd']
+            },
+            {
+              model: Pegawai,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt', 'password']]
+              }
+            },
+          ],
+          order: [["createdAt", "DESC"]],
+        })
+          .then(async (verif) => {
+            const data = await Notulen.findAll({
+              where: {
+                kode_opd: req.params.kode_opd,
+                nip_pegawai: req.decoded.nip,
+                tahun: currentYear.toString()
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: ['nama_opd']
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                },
+              ],
+              order: [["createdAt", "DESC"]],
+            })
+
+            res.status(200).json({
+              success: true,
+              data: {
+                code: 200,
+                message: "Success",
+                data: {
+                  verif,
+                  data
+                },
+              },
+            });
+          })
       } else if (req.decoded.role == 4) {
         const response = await Notulen.findAll({
           where: {
-            id_pegawai: req.decoded.id,
+            nip_pegawai: req.decoded.nip,
+            tahun: currentYear.toString()
           },
+          include: [
+            {
+              model: Perangkat_Daerah,
+              attributes: ['nama_opd']
+            },
+            {
+              model: Pegawai,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt', 'password']]
+              }
+            },
+          ],
           order: [["createdAt", "DESC"]],
-        });
+        })
 
         res.status(200).json({
           success: true,
           data: {
             code: 200,
             message: "Success",
-            data: response,
+            data: response
           },
         });
       }
@@ -568,7 +674,7 @@ class NotulenController {
     try {
       const response = await axios({
         method: 'post',
-        url: 'https://kak.madiunkota.go.id/api/skp/sasaran_kinerja_pegawai.json',
+        url: 'https://kak.madiunkota.go.id/api/skp/sasaran_pohon_kinerja_pegawai.json',
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           "Accept": 'application/x-www-form-urlencoded'

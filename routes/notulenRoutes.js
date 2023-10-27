@@ -16,7 +16,7 @@ router.get("/deleteFile", NotulenController.deleteFile);
 router.use(authenticate);
 router.get("/getNotulenDetail/:id", NotulenController.getOneNotulen);
 router.get("/getAuthNotulen/:kode_opd/:nip/:bulan/:tahun", NotulenController.getAuthNotulen);
-router.get("/getAllNotulens", NotulenController.getAllNotulen);
+router.get("/getAllNotulens/:kode_opd", NotulenController.getAllNotulen);
 router.post("/addNotulen", NotulenController.addNotulen);
 router.put("/editNotulen/:id", NotulenController.editNotulen);
 router.put("/updateStatus/:id", authorizeVerifikator, NotulenController.updateStatus);

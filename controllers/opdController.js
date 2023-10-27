@@ -183,17 +183,42 @@ class OPDController {
       if (response.data.results.length != 0) {
 
         const data = response.data.results
+        let data2 = [];
+        const urusanMap = new Map();
+
+        data.forEach((opd) => {
+          opd.urusan_opd.forEach((urusanOpd) => {
+            urusanOpd.bidang_urusan_opd.forEach((bidangOpd) => {
+              const key = `${urusanOpd.urusan}-${bidangOpd.bidang_urusan}`;
+              if (!urusanMap.has(key)) {
+                urusanMap.set(key, {
+                  urusan: urusanOpd.urusan,
+                  bidang_urusan_opd: [],
+                });
+              }
+              urusanMap.get(key).bidang_urusan_opd.push({
+                kode_bidang_urusan: bidangOpd.kode_bidang_urusan,
+                bidang_urusan: bidangOpd.bidang_urusan,
+                opd: {
+                  kode_opd: opd.kode_opd,
+                  nama_opd: opd.nama_opd,
+                },
+              });
+            });
+          });
+        });
+        data2.push(...urusanMap.values());
+
         res.status(200).json({
           success: true,
           data: {
             code: 200,
             message: 'Success',
-            data: data
+            data: data2
           }
         })
       }
     } catch (err) {
-      console.log(err.message, '>>>>>>>>>>>>>');
       res.status(500).json({
         success: false,
         data: {
