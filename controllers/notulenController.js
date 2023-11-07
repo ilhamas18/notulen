@@ -592,7 +592,7 @@ class NotulenController {
       const response = await Notulen.update(payload, {
         where: { id: +req.params.id },
       });
-      console.log(response, '.>>>');
+
       if (response[0] == 0) {
         res.status(404).json({
           success: false,
@@ -779,15 +779,11 @@ class NotulenController {
   static addTagging = async (req, res) => {
     if (req.decoded.role == 1 || req.decoded.role == 2) {
       try {
-        const response = await Tagging_Notulen.findOrCreate({
-          where: {
-            id_tagging: req.body.id_tagging
-          },
-          defaults: {
-            id_notulen: req.body.id_notulen,
-            id_tagging: req.body.id_tagging
-          }
-        })
+        const payload = {
+          id_notulen: req.body.id_notulen,
+          id_tagging: req.body.id_tagging
+        }
+        const response = await Tagging_Notulen.create(payload)
 
         res.status(200).json({
           success: true,
