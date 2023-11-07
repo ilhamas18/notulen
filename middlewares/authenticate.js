@@ -7,7 +7,7 @@ const authenticate = async (req, res, next) => {
     const token = headerToken.replace(/^Bearer\s+/i, "");
 
     const decoded = verifyToken(token);
-    console.log(headerToken, '>>>');
+
     const user = await Pegawai.findOne({
       where: {
         nip: decoded.nip
