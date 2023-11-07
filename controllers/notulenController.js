@@ -902,7 +902,10 @@ class NotulenController {
     if (req.decoded.role == 1 || req.decoded.role == 2) {
       try {
         const response = Tagging_Notulen.destroy({
-          where: { id_tagging: req.body.id_tagging }
+          where: {
+            id_tagging: req.body.id_tagging,
+            id_notulen: req.body.id_notulen
+          }
         })
 
         res.status(200).json({
