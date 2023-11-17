@@ -15,7 +15,10 @@ class NotulenController {
       if (req.decoded.role == 1) {
         const response = await Notulen.findAll({
           where: {
-            tahun: currentYear.toString()
+            status: {
+              [Op.not]: 'archieve'
+            },
+            tahun: currentYear.toString(),
           },
           include: [
             {
@@ -36,6 +39,9 @@ class NotulenController {
       } else if (req.decoded.role == 2) {
         const response = await Notulen.findAll({
           where: {
+            status: {
+              [Op.not]: 'archieve'
+            },
             kode_opd: req.params.kode_opd,
             tahun: currentYear.toString()
           },
@@ -65,6 +71,9 @@ class NotulenController {
       } else if (req.decoded.role == 3) {
         Notulen.findAll({
           where: {
+            status: {
+              [Op.not]: 'archieve'
+            },
             kode_opd: req.params.kode_opd,
             nip_atasan: req.decoded.nip,
             tahun: currentYear.toString()
@@ -120,6 +129,9 @@ class NotulenController {
       } else if (req.decoded.role == 4) {
         const response = await Notulen.findAll({
           where: {
+            status: {
+              [Op.not]: 'archieve'
+            },
             nip_pegawai: req.decoded.nip,
             tahun: currentYear.toString()
           },
