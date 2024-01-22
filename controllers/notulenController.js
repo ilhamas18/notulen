@@ -1,5 +1,13 @@
-const { Notulen, Pegawai, Perangkat_Daerah, Sasaran, Sasaran_Notulen, Tagging, Tagging_Notulen } = require("../models");
-const Sequelize = require("sequelize");
+const {
+  Uuid,
+  Notulen,
+  Pegawai,
+  Perangkat_Daerah,
+  Sasaran,
+  Sasaran_Notulen,
+  Tagging,
+  Tagging_Notulen
+} = require("../models");
 const { Op } = require("sequelize");
 const aws = require("aws-sdk");
 const axios = require('axios');
@@ -20,6 +28,7 @@ class NotulenController {
             },
             tahun: currentYear.toString(),
           },
+          order: [["createdAt", "DESC"]],
           include: [
             {
               model: Perangkat_Daerah,
@@ -156,6 +165,15 @@ class NotulenController {
             code: 200,
             message: "Success",
             data: response
+          },
+        });
+      } else {
+        res.status(401).json({
+          success: false,
+          data: {
+            code: 401,
+            message: "Unauthorized",
+            data: err,
           },
         });
       }
@@ -439,83 +457,97 @@ class NotulenController {
   };
 
   static addNotulen = async (req, res) => {
-    try {
-      if (req.decoded.role == 2 || req.decoded.role == 3 || req.decoded.role == 4) {
-        const payload = {
-          tagging: req.body.tagging,
-          tanggal: req.body.tanggal,
-          waktu: req.body.waktu,
-          pendahuluan: req.body.pendahuluan,
-          pimpinan_rapat: req.body.pimpinan_rapat,
-          peserta_rapat: req.body.peserta_rapat,
-          isi_rapat: req.body.isi_rapat,
-          tindak_lanjut: req.body.tindak_lanjut,
-          lokasi: req.body.lokasi,
-          acara: req.body.acara,
-          atasan: req.body.atasan,
-          status: req.body.status,
-          hari: req.body.hari,
-          bulan: req.body.bulan,
-          tahun: req.body.tahun,
-          id_sasaran: req.body.id_sasaran,
-          link_img_surat_undangan: req.body.link_img_surat_undangan,
-          link_img_daftar_hadir: req.body.link_img_daftar_hadir,
-          link_img_spj: req.body.link_img_spj,
-          link_img_foto: req.body.link_img_foto,
-          link_img_pendukung: req.body.link_img_pendukung,
-          signature: req.body.signature,
+    if (req.decoded.role == 2 || req.decoded.role == 3 || req.decoded.role == 4) {
+      Uuid.findOrCreate({
+        where: {
+          uuid: req.body.uuid
+        },
+        defaults: {
+          uuid: req.body.uuid,
           kode_opd: req.body.kode_opd,
-          nip_pegawai: req.body.nip_pegawai,
-          nip_atasan: req.body.nip_atasan,
-        };
-        const response = await Notulen.create(payload);
-
-        res.status(201).json({
-          success: true,
-          data: {
-            code: 201,
-            message: "Data notulen berhasil ditambahkan",
-            data: response,
-          },
-        });
-      } else {
-        res.status(401).json({
-          success: false,
-          data: {
-            code: 404,
-            message: 'Unauthorize as Admin OPD',
-            data: null
+          nip_pegawai: req.body.nip_pegawai
+        }
+      })
+        .then(_ => {
+          const payload = {
+            uuid: req.body.uuid,
+            tagging: req.body.tagging,
+            tanggal: req.body.tanggal,
+            waktu: req.body.waktu,
+            pendahuluan: req.body.pendahuluan,
+            pimpinan_rapat: req.body.pimpinan_rapat,
+            peserta_rapat: req.body.peserta_rapat,
+            isi_rapat: req.body.isi_rapat,
+            tindak_lanjut: req.body.tindak_lanjut,
+            lokasi: req.body.lokasi,
+            acara: req.body.acara,
+            atasan: req.body.atasan,
+            status: req.body.status,
+            hari: req.body.hari,
+            bulan: req.body.bulan,
+            tahun: req.body.tahun,
+            id_sasaran: req.body.id_sasaran,
+            link_img_surat_undangan: req.body.link_img_surat_undangan,
+            link_img_daftar_hadir: req.body.link_img_daftar_hadir,
+            link_img_spj: req.body.link_img_spj,
+            link_img_foto: req.body.link_img_foto,
+            link_img_pendukung: req.body.link_img_pendukung,
+            signature: req.body.signature,
+            kode_opd: req.body.kode_opd,
+            nip_pegawai: req.body.nip_pegawai,
+            nip_atasan: req.body.nip_atasan,
           }
+
+          Notulen.create(payload)
+            .then(response => {
+              res.status(201).json({
+                success: true,
+                data: {
+                  code: 201,
+                  message: "Data notulen berhasil ditambahkan",
+                  data: response,
+                },
+              });
+            })
+            .catch(err => {
+              if (err.name === "SequelizeDatabaseError") {
+                res.status(400).json({
+                  success: false,
+                  data: {
+                    code: 400,
+                    message: "Periksa kembali data Anda!",
+                    data: null,
+                  },
+                });
+              } else if (err.name === "SequelizeUniqueConstraintError") {
+                res.status(400).json({
+                  success: false,
+                  data: {
+                    code: 400,
+                    message: "Nama notulen sudah terdaftar",
+                  },
+                });
+              } else {
+                res.status(500).json({
+                  success: false,
+                  data: {
+                    code: 500,
+                    message: "Internal server error",
+                    data: err,
+                  },
+                });
+              }
+            })
         })
-      }
-    } catch (err) {
-      if (err.name === "SequelizeDatabaseError") {
-        res.status(400).json({
-          success: false,
-          data: {
-            code: 400,
-            message: "Periksa kembali data Anda!",
-            data: null,
-          },
-        });
-      } else if (err.name === "SequelizeUniqueConstraintError") {
-        res.status(400).json({
-          success: false,
-          data: {
-            code: 400,
-            message: "Nama notulen sudah terdaftar",
-          },
-        });
-      } else {
-        res.status(500).json({
-          success: false,
-          data: {
-            code: 500,
-            message: "Internal server error",
-            data: err,
-          },
-        });
-      }
+    } else {
+      res.status(401).json({
+        success: false,
+        data: {
+          code: 404,
+          message: 'Unauthorize as Admin OPD',
+          data: null
+        }
+      })
     }
   };
 

@@ -1,4 +1,3 @@
-const express = require("express");
 const router = require("express").Router();
 const NotulenController = require("../controllers/notulenController");
 const authenticate = require("../middlewares/authenticate");

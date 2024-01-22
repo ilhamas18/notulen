@@ -99,7 +99,7 @@ class PegawaiController {
           }
         });
       }
-      // console.log(response, '<<<<');
+
       res.status(200).json({
         success: true,
         data: {
@@ -109,7 +109,6 @@ class PegawaiController {
         }
       })
     } catch (err) {
-      console.log(err, '<<<<');
       res.status(500).json({
         success: false,
         data: {

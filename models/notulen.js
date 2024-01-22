@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Notulen.belongsTo(models.Perangkat_Daerah, { foreignKey: 'kode_opd' });
       Notulen.belongsTo(models.Pegawai, { foreignKey: 'nip_pegawai' });
+      Notulen.belongsTo(models.Uuid, { foreignKey: 'uuid' });
       Notulen.hasMany(models.File_Pendukung, { foreignKey: 'id_notulen' });
       Notulen.belongsToMany(models.Sasaran, {
         through: models.Sasaran_Notulen,
@@ -26,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Notulen.init({
+    uuid: DataTypes.STRING,
     tanggal: DataTypes.JSON,
     waktu: DataTypes.STRING,
     pendahuluan: DataTypes.STRING(1234),
