@@ -119,28 +119,38 @@ class UndanganController {
     try {
       if (req.decoded.role == 1) {
         const response = await Undangan.findAll({
-          order: [["createdAt", "DESC"]],
-          include: [
-            {
-              model: Perangkat_Daerah,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Pegawai,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
-            }
-          ],
           where: {
             status: {
               [Op.not]: 'archieve'
             },
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
           },
+          order: [["createdAt", "DESC"]],
+          include: [
+            {
+              model: Uuid,
+              where: {
+                bulan: req.params.bulan,
+                tahun: req.params.tahun
+              },
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                }
+              ]
+            }
+          ]
         })
 
         if (response === null) {
@@ -168,25 +178,35 @@ class UndanganController {
             status: {
               [Op.not]: 'archieve'
             },
-            kode_opd: req.params.kode_opd,
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
           },
           order: [["createdAt", "DESC"]],
           include: [
             {
-              model: Perangkat_Daerah,
+              model: Uuid,
+              where: {
+                kode_opd: req.params.kode_opd,
+                bulan: req.params.bulan,
+                tahun: req.params.tahun
+              },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Pegawai,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                }
+              ]
             }
-          ],
+          ]
         })
 
         if (response === null) {
@@ -214,25 +234,35 @@ class UndanganController {
             status: {
               [Op.not]: 'archieve'
             },
-            nip_pegawai: req.decoded.nip,
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
           },
           order: [["createdAt", "DESC"]],
           include: [
             {
-              model: Perangkat_Daerah,
+              model: Uuid,
+              where: {
+                nip_pegawai: req.decoded.nip,
+                bulan: req.params.bulan,
+                tahun: req.params.tahun,
+              },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Pegawai,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                }
+              ]
             }
-          ],
+          ]
         })
 
         if (response === null) {
@@ -284,12 +314,15 @@ class UndanganController {
         },
         defaults: {
           uuid: req.body.uuid,
+          hari: req.body.hari,
+          bulan: req.body.bulan,
+          tahun: req.body.tahun,
           kode_opd: req.body.kode_opd,
           nip_pegawai: req.body.nip_pegawai
         }
       })
         .then(_ => {
-          const payload = {
+          Undangan.create({
             uuid: req.body.uuid,
             nomor_surat: req.body.nomor_surat,
             sifat: req.body.sifat,
@@ -302,16 +335,9 @@ class UndanganController {
             acara: req.body.acara,
             penutup: req.body.penutup,
             status: req.body.status,
-            hari: req.body.hari,
-            bulan: req.body.bulan,
-            tahun: req.body.tahun,
             atasan: req.body.atasan,
-            kode_opd: req.body.kode_opd,
-            nip_pegawai: req.body.nip_pegawai,
             nip_atasan: req.body.nip_atasan
-          }
-
-          Undangan.create(payload)
+          })
             .then(response => {
               res.status(201).json({
                 success: true,
@@ -323,6 +349,7 @@ class UndanganController {
               });
             })
             .catch(err => {
+              console.log(err, '>>');
               if (err.name === "SequelizeDatabaseError") {
                 res.status(400).json({
                   success: false,

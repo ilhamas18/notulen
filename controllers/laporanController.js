@@ -1,4 +1,4 @@
-const { Uuid, Perangkat_Daerah, Pegawai, Undangan, Notulen } = require('../models');
+const { Uuid, Perangkat_Daerah, Pegawai, Undangan, Notulen, Tagging, Sasaran } = require('../models');
 const { Op } = require("sequelize");
 
 class LaporanController {
@@ -7,8 +7,8 @@ class LaporanController {
       if (req.decoded.role == 1) {
         const response = await Uuid.findAll({
           where: {
-            // bulan: req.params.bulan,
-            // tahun: req.params.tahun,
+            bulan: req.params.bulan,
+            tahun: req.params.tahun,
           },
           order: [["createdAt", "DESC"]],
           include: [
@@ -19,6 +19,18 @@ class LaporanController {
             {
               model: Pegawai,
               attributes: ['nama', 'nip']
+            },
+            {
+              model: Sasaran,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Tagging,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
             },
             {
               model: Undangan,
@@ -54,8 +66,8 @@ class LaporanController {
         const response = await Uuid.findAll({
           where: {
             kode_opd: req.params.kode_opd,
-            // bulan: req.params.bulan,
-            // tahun: req.params.tahun,
+            bulan: req.params.bulan,
+            tahun: req.params.tahun,
           },
           order: [["createdAt", "DESC"]],
           include: [
@@ -66,6 +78,18 @@ class LaporanController {
             {
               model: Pegawai,
               attributes: ['nama', 'nip']
+            },
+            {
+              model: Sasaran,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Tagging,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
             },
             {
               model: Undangan,
@@ -112,8 +136,8 @@ class LaporanController {
         const response = await Uuid.findAll({
           where: {
             nip_pegawai: req.decoded.nip,
-            // bulan: req.params.bulan,
-            // tahun: req.params.tahun,
+            bulan: req.params.bulan,
+            tahun: req.params.tahun,
           },
           order: [["createdAt", "DESC"]],
           include: [
@@ -124,6 +148,18 @@ class LaporanController {
             {
               model: Pegawai,
               attributes: ['nama', 'nip']
+            },
+            {
+              model: Sasaran,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt', 'Sasaran_Uuid']]
+              }
+            },
+            {
+              model: Tagging,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt', 'Tagging_Uuid']]
+              }
             },
             {
               model: Undangan,

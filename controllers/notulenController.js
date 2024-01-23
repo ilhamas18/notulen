@@ -4,15 +4,15 @@ const {
   Pegawai,
   Perangkat_Daerah,
   Sasaran,
-  Sasaran_Notulen,
+  Sasaran_Uuid,
   Tagging,
-  Tagging_Notulen
+  Tagging_Uuid
 } = require("../models");
 const { Op } = require("sequelize");
 const aws = require("aws-sdk");
 const axios = require('axios');
 const fs = require('fs');
-const { promisify } = require('util')
+const { promisify, log } = require('util')
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -26,16 +26,29 @@ class NotulenController {
             status: {
               [Op.not]: 'archieve'
             },
-            tahun: currentYear.toString(),
           },
           order: [["createdAt", "DESC"]],
+          attributes: {
+            exclude: [['createdAt', 'updatedAt']]
+          },
           include: [
             {
-              model: Perangkat_Daerah,
-              attributes: ['nama_opd']
+              model: Uuid,
+              where: {
+                tahun: currentYear.toString(),
+              },
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: ['nama_opd']
+                }
+              ]
             }
           ]
-        });
+        })
 
         res.status(200).json({
           success: true,
@@ -51,20 +64,33 @@ class NotulenController {
             status: {
               [Op.not]: 'archieve'
             },
-            kode_opd: req.params.kode_opd,
-            tahun: currentYear.toString()
+          },
+          attributes: {
+            exclude: [['createdAt', 'updatedAt']]
           },
           include: [
             {
-              model: Perangkat_Daerah,
-              attributes: ['nama_opd']
-            },
-            {
-              model: Pegawai,
+              model: Uuid,
+              where: {
+                kode_opd: req.params.kode_opd,
+                tahun: currentYear.toString()
+              },
               attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
-            },
+                exclude: [['createdAt', 'updatedAt']]
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: ['nama_opd']
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                },
+              ]
+            }
           ],
           order: [["createdAt", "DESC"]],
         })
@@ -83,30 +109,21 @@ class NotulenController {
             status: {
               [Op.not]: 'archieve'
             },
-            kode_opd: req.params.kode_opd,
             nip_atasan: req.decoded.nip,
-            tahun: currentYear.toString()
+          },
+          order: [["createdAt", "DESC"]],
+          attributes: {
+            exclude: [['createdAt', 'updatedAt']]
           },
           include: [
             {
-              model: Perangkat_Daerah,
-              attributes: ['nama_opd']
-            },
-            {
-              model: Pegawai,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
-            },
-          ],
-          order: [["createdAt", "DESC"]],
-        })
-          .then(async (verif) => {
-            const data = await Notulen.findAll({
+              model: Uuid,
               where: {
                 kode_opd: req.params.kode_opd,
-                nip_pegawai: req.decoded.nip,
                 tahun: currentYear.toString()
+              },
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
               },
               include: [
                 {
@@ -119,8 +136,43 @@ class NotulenController {
                     exclude: [['createdAt', 'updatedAt', 'password']]
                   }
                 },
-              ],
+              ]
+            }
+          ]
+        })
+          .then(async (verif) => {
+            const data = await Notulen.findAll({
+              where: {
+                status: {
+                  [Op.not]: 'archieve'
+                },
+              },
               order: [["createdAt", "DESC"]],
+              include: [
+                {
+                  model: Uuid,
+                  where: {
+                    kode_opd: req.params.kode_opd,
+                    nip_pegawai: req.decoded.nip,
+                    tahun: currentYear.toString()
+                  },
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  },
+                  include: [
+                    {
+                      model: Perangkat_Daerah,
+                      attributes: ['nama_opd']
+                    },
+                    {
+                      model: Pegawai,
+                      attributes: {
+                        exclude: [['createdAt', 'updatedAt', 'password']]
+                      }
+                    },
+                  ]
+                }
+              ]
             })
 
             res.status(200).json({
@@ -135,28 +187,51 @@ class NotulenController {
               },
             });
           })
+          .catch(err => {
+            res.status(500).json({
+              success: false,
+              data: {
+                code: 500,
+                message: "Internal server error",
+                data: err.message,
+              },
+            });
+          })
       } else if (req.decoded.role == 4) {
         const response = await Notulen.findAll({
           where: {
             status: {
               [Op.not]: 'archieve'
             },
-            nip_pegawai: req.decoded.nip,
-            tahun: currentYear.toString()
+          },
+          order: [["createdAt", "DESC"]],
+          attributes: {
+            exclude: [['createdAt', 'updatedAt']]
           },
           include: [
             {
-              model: Perangkat_Daerah,
-              attributes: ['nama_opd']
-            },
-            {
-              model: Pegawai,
+              model: Uuid,
+              where: {
+                nip_pegawai: req.decoded.nip,
+                tahun: currentYear.toString()
+              },
               attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
-            },
-          ],
-          order: [["createdAt", "DESC"]],
+                exclude: [['createdAt', 'updatedAt']]
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: ['nama_opd']
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                },
+              ]
+            }
+          ]
         })
 
         res.status(200).json({
@@ -193,41 +268,54 @@ class NotulenController {
     try {
       if (req.decoded.role == 1) {
         const response = await Notulen.findAll({
-          order: [["createdAt", "DESC"]],
-          include: [
-            {
-              model: Perangkat_Daerah,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Pegawai,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
-            },
-            {
-              model: Sasaran,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Tagging,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-          ],
           where: {
             status: {
               [Op.not]: 'archieve'
             },
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
           },
-        });
+          order: [["createdAt", "DESC"]],
+          attributes: {
+            exclude: [['createdAt', 'updatedAt']]
+          },
+          include: [
+            {
+              model: Uuid,
+              where: {
+                bulan: req.params.bulan,
+                tahun: req.params.tahun,
+              },
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                },
+                {
+                  model: Sasaran,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Tagging,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+              ]
+            }
+          ]
+        })
 
         if (response === null) {
           res.status(404).json({
@@ -254,38 +342,52 @@ class NotulenController {
             status: {
               [Op.not]: 'archieve'
             },
-            kode_opd: req.params.kode_opd,
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
+          },
+          order: [["createdAt", "DESC"]],
+          attributes: {
+            exclude: [['createdAt', 'updatedAt']]
           },
           include: [
             {
-              model: Perangkat_Daerah,
+              model: Uuid,
+              where: {
+                kode_opd: req.params.kode_opd,
+                bulan: req.params.bulan,
+                tahun: req.params.tahun,
+              },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Pegawai,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
-            },
-            {
-              model: Sasaran,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Tagging,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-          ],
-          order: [["createdAt", "DESC"]],
-        });
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                },
+                {
+                  model: Sasaran,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Tagging,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+              ]
+            }
+          ]
+        })
+
         if (response === null) {
           res.status(404).json({
             success: false,
@@ -307,42 +409,55 @@ class NotulenController {
         }
       } else if (req.decoded.role == 3 || req.decoded.role == 4) {
         const response = await Notulen.findAll({
-          include: [
-            {
-              model: Perangkat_Daerah,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Pegawai,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
-            },
-            {
-              model: Sasaran,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Tagging,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-          ],
           where: {
             status: {
               [Op.not]: 'archieve'
             },
-            nip_pegawai: req.decoded.nip,
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
           },
           order: [["createdAt", "DESC"]],
-        });
+          attributes: {
+            exclude: [['createdAt', 'updatedAt']]
+          },
+          include: [
+            {
+              model: Uuid,
+              where: {
+                nip_pegawai: req.decoded.nip,
+                bulan: req.params.bulan,
+                tahun: req.params.tahun,
+              },
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                },
+                {
+                  model: Sasaran,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Tagging,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+              ]
+            }
+          ]
+        })
 
         if (response === null) {
           res.status(404).json({
@@ -391,29 +506,37 @@ class NotulenController {
         where: { id: +req.params.id },
         include: [
           {
-            model: Perangkat_Daerah,
+            model: Uuid,
             attributes: {
-              exclude: [['createdAt', 'updatedAt']]
-            }
-          },
-          {
-            model: Pegawai,
-            attributes: {
-              exclude: [['createdAt', 'updatedAt', 'password']]
-            }
-          },
-          {
-            model: Sasaran,
-            attributes: {
-              exclude: [['createdAt', 'updatedAt']]
-            }
-          },
-          {
-            model: Tagging,
-            attributes: {
-              exclude: [['createdAt', 'updatedAt']]
-            }
-          },
+              exclude: ['createdAt', 'updatedAt'],
+            },
+            include: [
+              {
+                model: Perangkat_Daerah,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt']]
+                }
+              },
+              {
+                model: Pegawai,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt', 'password']]
+                }
+              },
+              {
+                model: Sasaran,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt']]
+                }
+              },
+              {
+                model: Tagging,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt']]
+                }
+              },
+            ]
+          }
         ],
       });
 
@@ -464,6 +587,9 @@ class NotulenController {
         },
         defaults: {
           uuid: req.body.uuid,
+          hari: req.body.hari,
+          bulan: req.body.bulan,
+          tahun: req.body.tahun,
           kode_opd: req.body.kode_opd,
           nip_pegawai: req.body.nip_pegawai
         }
@@ -483,9 +609,6 @@ class NotulenController {
             acara: req.body.acara,
             atasan: req.body.atasan,
             status: req.body.status,
-            hari: req.body.hari,
-            bulan: req.body.bulan,
-            tahun: req.body.tahun,
             id_sasaran: req.body.id_sasaran,
             link_img_surat_undangan: req.body.link_img_surat_undangan,
             link_img_daftar_hadir: req.body.link_img_daftar_hadir,
@@ -493,8 +616,6 @@ class NotulenController {
             link_img_foto: req.body.link_img_foto,
             link_img_pendukung: req.body.link_img_pendukung,
             signature: req.body.signature,
-            kode_opd: req.body.kode_opd,
-            nip_pegawai: req.body.nip_pegawai,
             nip_atasan: req.body.nip_atasan,
           }
 
@@ -730,9 +851,9 @@ class NotulenController {
             const payload = [];
             payload.push({
               id_sasaran: req.body.id_sasaran,
-              id_notulen: req.body.id_notulen
+              id_uuid: req.body.id_uuid
             })
-            const response = await Sasaran_Notulen.bulkCreate(payload);
+            const response = await Sasaran_Uuid.bulkCreate(payload);
 
             if (response.length != 0) {
               res.status(200).json({
@@ -779,7 +900,7 @@ class NotulenController {
 
   static deleteSasaran = (req, res) => {
     if (req.decoded.role == 3 || req.decoded.role == 4) {
-      Sasaran_Notulen.destroy({
+      Sasaran_Uuid.destroy({
         where: { id_sasaran: req.body.id_sasaran }
       })
         .then(async () => {
@@ -808,6 +929,7 @@ class NotulenController {
           }
         })
         .catch(err => {
+          console.log(err, '>>>');
           res.status(500).json({
             success: false,
             data: {
@@ -824,10 +946,10 @@ class NotulenController {
     if (req.decoded.role == 1 || req.decoded.role == 2) {
       try {
         const payload = {
-          id_notulen: req.body.id_notulen,
+          id_uuid: req.body.id_uuid,
           id_tagging: req.body.id_tagging
         }
-        const response = await Tagging_Notulen.create(payload)
+        const response = await Tagging_Uuid.create(payload)
 
         res.status(200).json({
           success: true,
@@ -838,6 +960,7 @@ class NotulenController {
           }
         })
       } catch (err) {
+        console.log(err);
         res.status(500).json({
           success: false,
           data: {
@@ -863,42 +986,55 @@ class NotulenController {
     try {
       if (req.decoded.role == 3) {
         const response = await Notulen.findAll({
-          order: [["createdAt", "DESC"]],
           where: {
             status: {
               [Op.not]: 'archieve'
             },
-            kode_opd: req.params.kode_opd,
             nip_atasan: req.decoded.nip,
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
           },
+          attributes: {
+            exclude: [['createdAt', 'updatedAt']]
+          },
+          order: [["createdAt", "DESC"]],
           include: [
             {
-              model: Perangkat_Daerah,
+              model: Uuid,
+              where: {
+                kode_opd: req.params.kode_opd,
+                bulan: req.params.bulan,
+                tahun: req.params.tahun,
+              },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Pegawai,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
-            },
-            {
-              model: Sasaran,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Tagging,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-          ],
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                },
+                {
+                  model: Sasaran,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Tagging,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+              ]
+            }
+          ]
         })
 
         if (response === null) {
@@ -945,10 +1081,10 @@ class NotulenController {
   static deleteTagging = (req, res) => {
     if (req.decoded.role == 1 || req.decoded.role == 2) {
       try {
-        const response = Tagging_Notulen.destroy({
+        const response = Tagging_Uuid.destroy({
           where: {
             id_tagging: req.body.id_tagging,
-            id_notulen: req.body.id_notulen
+            id_uuid: req.body.id_uuid
           }
         })
 
@@ -1016,37 +1152,48 @@ class NotulenController {
     try {
       if (req.decoded.role == 1) {
         const response = await Notulen.findAll({
+          where: { status: 'archieve' },
+          order: [["updatedAt", "DESC"]],
+          attributes: {
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            }
+          },
           include: [
             {
-              model: Perangkat_Daerah,
+              model: Uuid,
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Pegawai,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt', 'password']]
-              }
-            },
-            {
-              model: Sasaran,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-            {
-              model: Tagging,
-              attributes: {
-                exclude: [['createdAt', 'updatedAt']]
-              }
-            },
-          ],
-          where: {
-            status: 'archieve',
-          },
-          order: [["createdAt", "DESC"]],
-        });
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                },
+                {
+                  model: Sasaran,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Tagging,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+              ]
+            }
+          ]
+        })
 
         if (response === null) {
           res.status(404).json({

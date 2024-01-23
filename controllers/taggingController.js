@@ -1,4 +1,4 @@
-const { Tagging, Notulen, Tagging_Notulen, Perangkat_Daerah } = require('../models');
+const { Tagging, Uuid, Tagging_Notulen, Perangkat_Daerah } = require('../models');
 
 class TaggingController {
   static getAllTagging = async (req, res) => {
@@ -14,7 +14,7 @@ class TaggingController {
               }
             },
             {
-              model: Notulen,
+              model: Uuid,
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               }
@@ -35,7 +35,7 @@ class TaggingController {
           where: { kode_opd: req.params.kode_opd },
           include: [
             {
-              model: Notulen,
+              model: Uuid,
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               }

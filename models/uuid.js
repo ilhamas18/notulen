@@ -14,6 +14,16 @@ module.exports = (sequelize, DataTypes) => {
       Uuid.hasOne(models.Notulen, { foreignKey: 'uuid' });
       Uuid.belongsTo(models.Perangkat_Daerah, { foreignKey: 'kode_opd' });
       Uuid.belongsTo(models.Pegawai, { foreignKey: 'nip_pegawai' });
+      Uuid.belongsToMany(models.Sasaran, {
+        through: models.Sasaran_Uuid,
+        foreignKey: 'id_uuid',
+        otherKey: 'id_sasaran'
+      });
+      Uuid.belongsToMany(models.Tagging, {
+        through: models.Tagging_Uuid,
+        foreignKey: 'id_uuid',
+        otherKey: 'id_tagging'
+      })
     }
   }
   Uuid.init({
@@ -21,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       primaryKey: true
     },
+    hari: DataTypes.STRING,
+    bulan: DataTypes.STRING,
+    tahun: DataTypes.STRING,
+    kode_opd: DataTypes.STRING,
+    nip_pegawai: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Uuid',

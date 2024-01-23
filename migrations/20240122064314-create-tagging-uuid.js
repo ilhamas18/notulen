@@ -2,53 +2,39 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Uuids', {
+    await queryInterface.createTable('Tagging_Uuids', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      uuid: {
-        type: Sequelize.STRING,
-        unique: true,
-        allowNull: false,
-        primaryKey: true,
-        validate: {
-          notEmpty: {
-            args: true,
-            msg: 'uuid tidak boleh kosong!'
-          },
-        }
-      },
-      kode_opd: {
+      id_uuid: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
             args: true,
-            msg: "Harap masukkan OPD terkait!",
+            msg: "Harap masukkan notulen",
           },
         },
         references: {
-          model: "Perangkat_Daerahs",
-          key: "kode_opd",
+          model: "Uuids",
+          key: "uuid",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
-      nip_pegawai: {
-        type: Sequelize.STRING,
+      id_tagging: {
+        type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
           notEmpty: {
             args: true,
-            msg: "Harap masukkan pegawai terkait!",
+            msg: "Harap masukkan tematik",
           },
         },
         references: {
-          model: "Pegawais",
-          key: "nip",
+          model: "Taggings",
+          key: "id",
         },
       },
       createdAt: {
@@ -62,6 +48,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Uuids');
+    await queryInterface.dropTable('Tagging_Uuids');
   }
 };

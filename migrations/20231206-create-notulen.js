@@ -9,6 +9,20 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      uuid: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Harap masukkan uuid!",
+          },
+        },
+        references: {
+          model: "Uuids",
+          key: "uuid",
+        },
+      },
       tanggal: {
         type: Sequelize.JSON,
       },
@@ -42,15 +56,6 @@ module.exports = {
       status: {
         type: Sequelize.STRING,
       },
-      hari: {
-        type: Sequelize.STRING,
-      },
-      bulan: {
-        type: Sequelize.STRING,
-      },
-      tahun: {
-        type: Sequelize.STRING,
-      },
       link_img_foto: {
         type: Sequelize.JSON,
       },
@@ -74,36 +79,6 @@ module.exports = {
       },
       keterangan: {
         type: Sequelize.STRING,
-      },
-      kode_opd: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: {
-            args: true,
-            msg: "Harap masukkan OPD terkait!",
-          },
-        },
-        references: {
-          model: "Perangkat_Daerahs",
-          key: "kode_opd",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      nip_pegawai: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: {
-            args: true,
-            msg: "Harap masukkan pegawai terkait!",
-          },
-        },
-        references: {
-          model: "Pegawais",
-          key: "nip",
-        },
       },
       nip_atasan: {
         type: Sequelize.STRING,

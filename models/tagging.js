@@ -11,10 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Tagging.belongsTo(models.Perangkat_Daerah, { foreignKey: 'kode_opd' });
-      Tagging.belongsToMany(models.Notulen, {
-        through: models.Tagging_Notulen,
+      Tagging.belongsToMany(models.Uuid, {
+        through: models.Tagging_Uuid,
         foreignKey: 'id_tagging',
-        otherKey: 'id_notulen'
+        otherKey: 'id_uuid'
       })
     }
   }
