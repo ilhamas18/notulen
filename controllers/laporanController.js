@@ -35,6 +35,11 @@ class LaporanController {
             {
               model: Undangan,
               required: false,
+              where: {
+                status: {
+                  [Op.not]: 'archieve'
+                }
+              },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               }
@@ -44,7 +49,7 @@ class LaporanController {
               required: false,
               where: {
                 status: {
-                  [Op.not]: 'archive'
+                  [Op.not]: 'archieve'
                 }
               },
               attributes: {
@@ -94,6 +99,11 @@ class LaporanController {
             {
               model: Undangan,
               required: false,
+              where: {
+                status: {
+                  [Op.not]: 'archieve'
+                }
+              },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               }
@@ -103,7 +113,7 @@ class LaporanController {
               required: false,
               where: {
                 status: {
-                  [Op.not]: 'archive'
+                  [Op.not]: 'archieve'
                 }
               },
               attributes: {
@@ -164,6 +174,11 @@ class LaporanController {
             {
               model: Undangan,
               required: false,
+              where: {
+                status: {
+                  [Op.not]: 'archieve'
+                }
+              },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               }
@@ -173,7 +188,7 @@ class LaporanController {
               required: false,
               where: {
                 status: {
-                  [Op.not]: 'archive'
+                  [Op.not]: 'archieve'
                 }
               },
               attributes: {
@@ -213,7 +228,6 @@ class LaporanController {
         });
       }
     } catch (err) {
-      console.log(err);
       res.status(500).json({
         success: false,
         data: {

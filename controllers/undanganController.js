@@ -1,4 +1,4 @@
-const { Uuid, Undangan, Perangkat_Daerah, Pegawai } = require('../models');
+const { Uuid, Undangan, Perangkat_Daerah, Pegawai, Sasaran, Tagging } = require('../models');
 const { Op } = require("sequelize");
 
 class UndanganController {
@@ -147,6 +147,18 @@ class UndanganController {
                   attributes: {
                     exclude: [['createdAt', 'updatedAt', 'password']]
                   }
+                },
+                {
+                  model: Sasaran,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Tagging,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
                 }
               ]
             }
@@ -202,6 +214,18 @@ class UndanganController {
                   model: Pegawai,
                   attributes: {
                     exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                },
+                {
+                  model: Sasaran,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Tagging,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
                   }
                 }
               ]
@@ -259,6 +283,18 @@ class UndanganController {
                   attributes: {
                     exclude: [['createdAt', 'updatedAt', 'password']]
                   }
+                },
+                {
+                  model: Sasaran,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Tagging,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
                 }
               ]
             }
@@ -306,6 +342,86 @@ class UndanganController {
     }
   }
 
+  static getOneUndangan = async (req, res) => {
+    try {
+      const response = await Undangan.findOne({
+        where: {
+          id: +req.params.id,
+          status: {
+            [Op.not]: 'archieve'
+          },
+        },
+        order: [["createdAt", "DESC"]],
+        attributes: {
+          exclude: [['createdAt', 'updatedAt']]
+        },
+        include: [
+          {
+            model: Uuid,
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            },
+            include: [
+              {
+                model: Perangkat_Daerah,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt']]
+                }
+              },
+              {
+                model: Pegawai,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt', 'password']]
+                }
+              },
+              {
+                model: Sasaran,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt']]
+                }
+              },
+              {
+                model: Tagging,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt']]
+                }
+              }
+            ]
+          }
+        ]
+      });
+
+      if (response === null) {
+        res.status(404).json({
+          success: false,
+          data: {
+            code: 404,
+            message: "ID Laporan tidak ditemukan!",
+            data: response,
+          },
+        });
+      } else {
+        res.status(200).json({
+          success: true,
+          data: {
+            code: 200,
+            message: "Success",
+            data: response,
+          },
+        });
+      }
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        data: {
+          code: 500,
+          message: "Internal server error",
+          data: err,
+        },
+      });
+    }
+  }
+
   static addUndangan = (req, res) => {
     if (req.decoded.role == 2 || req.decoded.role == 3 || req.decoded.role == 4) {
       Uuid.findOrCreate({
@@ -329,11 +445,13 @@ class UndanganController {
             perihal: req.body.perihal,
             ditujukan: req.body.ditujukan,
             pendahuluan: req.body.pendahuluan,
+            isi_undangan: req.body.isi_undangan,
             tanggal: req.body.tanggal,
             waktu: req.body.waktu,
-            tempat: req.body.tempat,
+            lokasi: req.body.lokasi,
             acara: req.body.acara,
             penutup: req.body.penutup,
+            signature: req.body.signature,
             status: req.body.status,
             atasan: req.body.atasan,
             nip_atasan: req.body.nip_atasan
@@ -398,6 +516,110 @@ class UndanganController {
           data: null
         }
       })
+    }
+  }
+
+  static editUndangan = async (req, res) => {
+    try {
+      const payload = {
+        uuid: req.body.uuid,
+        nomor_surat: req.body.nomor_surat,
+        sifat: req.body.sifat,
+        perihal: req.body.perihal,
+        ditujukan: req.body.ditujukan,
+        pendahuluan: req.body.pendahuluan,
+        isi_undangan: req.body.isi_undangan,
+        tanggal: req.body.tanggal,
+        waktu: req.body.waktu,
+        lokasi: req.body.lokasi,
+        acara: req.body.acara,
+        penutup: req.body.penutup,
+        signature: req.body.signature,
+        status: req.body.status,
+        atasan: req.body.atasan,
+        nip_atasan: req.body.nip_atasan
+      }
+
+      if (req.body.status !== "Disetujui") {
+        const response = await Undangan.update(payload, {
+          where: { id: +req.params.id }
+        })
+
+        if (response[0] == 0) {
+          res.status(404).json({
+            success: false,
+            data: {
+              code: 404,
+              message: "ID undangan tidak ditemukan!",
+            },
+          });
+        } else {
+          res.status(200).json({
+            success: true,
+            data: {
+              code: 200,
+              message: "Berhasil update data undangan",
+              data: response,
+            },
+          });
+        }
+      } else {
+        res.status(400).json({
+          success: false,
+          data: {
+            code: 400,
+            message: "Tidak bisa mengedit undangan yang sudah disetujui!",
+          },
+        });
+      }
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        data: {
+          code: 500,
+          message: "Internal server error",
+          data: err,
+        },
+      });
+    }
+  }
+
+  static archieveUndangan = async (req, res) => {
+    try {
+      const payload = {
+        status: 'archieve'
+      }
+      const response = await Undangan.update(payload, {
+        where: { id: req.params.id }
+      })
+
+      if (response[0] == 0) {
+        res.status(404).json({
+          success: false,
+          data: {
+            code: 404,
+            message: "ID undangan tidak ditemukan!",
+          },
+        });
+      } else {
+        res.status(200).json({
+          success: true,
+          data: {
+            code: 200,
+            message: "Berhasil update data undangan",
+            data: response,
+          },
+        });
+      }
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        data: {
+          code: 500,
+          message: "Internal server error",
+          data: err,
+        },
+      });
     }
   }
 }

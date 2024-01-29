@@ -720,7 +720,7 @@ class NotulenController {
             success: true,
             data: {
               code: 200,
-              message: "Berhasil update data pegawai",
+              message: "Berhasil update data notulen",
               data: response,
             },
           });
@@ -1131,7 +1131,7 @@ class NotulenController {
           success: true,
           data: {
             code: 200,
-            message: "Berhasil update data pegawai",
+            message: "Berhasil update data notulen",
             data: response,
           },
         });

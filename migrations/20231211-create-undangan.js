@@ -33,9 +33,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       ditujukan: {
-        type: Sequelize.STRING
+        type: Sequelize.JSON,
       },
       pendahuluan: {
+        type: Sequelize.STRING(10000)
+      },
+      isi_undangan: {
         type: Sequelize.STRING(10000)
       },
       tanggal: {
@@ -44,13 +47,16 @@ module.exports = {
       waktu: {
         type: Sequelize.STRING
       },
-      tempat: {
+      lokasi: {
         type: Sequelize.STRING
       },
       acara: {
         type: Sequelize.STRING
       },
       penutup: {
+        type: Sequelize.STRING(10000)
+      },
+      signature: {
         type: Sequelize.STRING(10000)
       },
       status: {
