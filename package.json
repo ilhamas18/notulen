@@ -26,7 +26,8 @@
     "pg": "^8.11.0",
     "sequelize": "^6.32.0",
     "sequelize-cli": "^6.6.1",
-    "util": "^0.12.5"
+    "util": "^0.12.5",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "dotenv": "^16.1.4",

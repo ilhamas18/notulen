@@ -9,5 +9,7 @@ router.get('/getUndanganDetail/:id', UndanganController.getOneUndangan);
 router.put('/editUndangan/:id', UndanganController.editUndangan);
 router.put('/archieve/:id', UndanganController.archieveUndangan);
 router.post('/addUndangan', UndanganController.addUndangan);
+router.get('/getArchieve', UndanganController.getArchieveUndangan);
+router.delete('/deleteUndangan/:id', UndanganController.deleteUndangan);
 
 module.exports = router;

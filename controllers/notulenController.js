@@ -596,6 +596,7 @@ class NotulenController {
       })
         .then(_ => {
           const payload = {
+            id: Math.floor(Math.random() * 10000),
             uuid: req.body.uuid,
             tagging: req.body.tagging,
             tanggal: req.body.tanggal,
@@ -631,6 +632,7 @@ class NotulenController {
               });
             })
             .catch(err => {
+              console.log(err, '<<<');
               if (err.name === "SequelizeDatabaseError") {
                 res.status(400).json({
                   success: false,
@@ -929,7 +931,6 @@ class NotulenController {
           }
         })
         .catch(err => {
-          console.log(err, '>>>');
           res.status(500).json({
             success: false,
             data: {

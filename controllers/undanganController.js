@@ -347,9 +347,6 @@ class UndanganController {
       const response = await Undangan.findOne({
         where: {
           id: +req.params.id,
-          status: {
-            [Op.not]: 'archieve'
-          },
         },
         order: [["createdAt", "DESC"]],
         attributes: {
@@ -439,6 +436,7 @@ class UndanganController {
       })
         .then(_ => {
           Undangan.create({
+            id: Math.floor(Math.random() * 10000),
             uuid: req.body.uuid,
             nomor_surat: req.body.nomor_surat,
             sifat: req.body.sifat,
@@ -610,6 +608,122 @@ class UndanganController {
             data: response,
           },
         });
+      }
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        data: {
+          code: 500,
+          message: "Internal server error",
+          data: err,
+        },
+      });
+    }
+  }
+
+  static getArchieveUndangan = async (req, res) => {
+    try {
+      if (req.decoded.role == 1) {
+        const response = await Undangan.findAll({
+          where: { status: 'archieve' },
+          order: [["updatedAt", "DESC"]],
+          attributes: {
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            }
+          },
+          include: [
+            {
+              model: Uuid,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              },
+              include: [
+                {
+                  model: Perangkat_Daerah,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Pegawai,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt', 'password']]
+                  }
+                },
+                {
+                  model: Sasaran,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+                {
+                  model: Tagging,
+                  attributes: {
+                    exclude: [['createdAt', 'updatedAt']]
+                  }
+                },
+              ]
+            }
+          ]
+        })
+
+        if (response === null) {
+          res.status(404).json({
+            success: false,
+            data: {
+              code: 404,
+              message: "Undangan tidak ditemukan!",
+              data: response,
+            },
+          });
+        } else {
+          res.status(200).json({
+            success: true,
+            data: {
+              code: 200,
+              message: "Success",
+              data: response,
+            },
+          });
+        }
+      }
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        data: {
+          code: 500,
+          message: "Internal server error",
+          data: err,
+        },
+      });
+    }
+  }
+
+  static deleteUndangan = async (req, res) => {
+    try {
+      const response = await Undangan.destroy({
+        where: { id: +req.params.id },
+        returning: true
+      })
+
+      if (response == 1) {
+        res.status(200).json({
+          success: true,
+          data: {
+            code: 200,
+            message: 'Berhasil hapus data undangan',
+            data: response
+          }
+        })
+      } else {
+        res.status(404).json({
+          success: false,
+          data: {
+            code: 404,
+            message: 'ID undangan tidak ditemukan!'
+          }
+        })
       }
     } catch (err) {
       res.status(500).json({

@@ -1,12 +1,7 @@
 const router = require("express").Router();
 const NotulenController = require("../controllers/notulenController");
 const authenticate = require("../middlewares/authenticate");
-// const upload = require("../helpers/s3");
-const upload = require('../helpers/upload');
 const {
-  authorize,
-  authorizeUser,
-  authorizeAdminOPD,
   authorizeVerifikator,
 } = require("../middlewares/authorize");
 
