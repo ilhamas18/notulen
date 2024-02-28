@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     waktu: DataTypes.STRING,
     lokasi: DataTypes.STRING,
     acara: DataTypes.STRING,
+    catatan: DataTypes.STRING(10000),
     penutup: DataTypes.STRING(10000),
     signature: DataTypes.STRING(10000),
     status: DataTypes.STRING,

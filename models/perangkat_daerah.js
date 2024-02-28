@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     alamat: DataTypes.STRING,
     telepon: DataTypes.STRING,
     faximile: DataTypes.STRING,
-    website: DataTypes.STRING
+    website: DataTypes.STRING,
+    kepala_opd: DataTypes.JSON
   }, {
     sequelize,
     modelName: 'Perangkat_Daerah',

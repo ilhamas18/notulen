@@ -110,7 +110,8 @@ class OPDController {
         alamat: req.body.alamat,
         telepon: req.body.telepon,
         faximile: req.body.faximile,
-        website: req.body.website
+        website: req.body.website,
+        kepala_opd: req.body.kepala_opd
       }
 
       const response = await Perangkat_Daerah.update(payload, {

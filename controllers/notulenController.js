@@ -868,6 +868,7 @@ class NotulenController {
               })
             }
           } catch (err) {
+            console.log(err.message, "ERROR");
             res.status(500).json({
               success: false,
               data: {
