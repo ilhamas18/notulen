@@ -632,7 +632,6 @@ class NotulenController {
               });
             })
             .catch(err => {
-              console.log(err, '<<<');
               if (err.name === "SequelizeDatabaseError") {
                 res.status(400).json({
                   success: false,
@@ -667,7 +666,7 @@ class NotulenController {
         success: false,
         data: {
           code: 404,
-          message: 'Unauthorize as Admin OPD',
+          message: 'Unauthorize as a User',
           data: null
         }
       })

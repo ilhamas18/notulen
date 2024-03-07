@@ -1,4 +1,4 @@
-const { Uuid, Perangkat_Daerah, Pegawai, Undangan, Notulen, Tagging, Sasaran } = require('../models');
+const { Uuid, Perangkat_Daerah, Pegawai, Undangan, Peserta, Notulen, Tagging, Sasaran } = require('../models');
 const { Op } = require("sequelize");
 
 class LaporanController {
@@ -40,6 +40,13 @@ class LaporanController {
                   [Op.not]: 'archieve'
                 }
               },
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Peserta,
+              required: false,
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               }
@@ -104,6 +111,13 @@ class LaporanController {
                   [Op.not]: 'archieve'
                 }
               },
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
+              model: Peserta,
+              required: false,
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               }
@@ -184,6 +198,13 @@ class LaporanController {
               }
             },
             {
+              model: Peserta,
+              required: false,
+              attributes: {
+                exclude: [['createdAt', 'updatedAt']]
+              }
+            },
+            {
               model: Notulen,
               required: false,
               where: {
@@ -224,6 +245,78 @@ class LaporanController {
             code: 401,
             message: "Unauthorized",
             data: null,
+          },
+        });
+      }
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        data: {
+          code: 500,
+          message: "Internal server error",
+          data: err.message,
+        },
+      });
+    }
+  }
+
+  static getLaporanDetail = async (req, res) => {
+    try {
+      const response = await Uuid.findAll({
+        where: {
+          uuid: req.params.uuid
+        },
+        include: [
+          {
+            model: Undangan,
+            required: false,
+            where: {
+              status: {
+                [Op.not]: 'archieve'
+              }
+            },
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            }
+          },
+          {
+            model: Peserta,
+            required: false,
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            }
+          },
+          {
+            model: Notulen,
+            required: false,
+            where: {
+              status: {
+                [Op.not]: 'archieve'
+              }
+            },
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            }
+          }
+        ]
+      })
+
+      if (response === null) {
+        res.status(404).json({
+          success: false,
+          data: {
+            code: 404,
+            message: "Notulen tidak ditemukan!",
+            data: response,
+          },
+        });
+      } else {
+        res.status(200).json({
+          success: true,
+          data: {
+            code: 200,
+            message: "Success",
+            data: response,
           },
         });
       }

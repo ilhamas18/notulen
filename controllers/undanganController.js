@@ -511,7 +511,7 @@ class UndanganController {
         success: false,
         data: {
           code: 404,
-          message: 'Unauthorize as Admin OPD',
+          message: 'Unauthorized',
           data: null
         }
       })

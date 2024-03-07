@@ -1,4 +1,3 @@
-const e = require('express');
 const { Pegawai, Perangkat_Daerah } = require('../models');
 const { hashPassword, comparePassword } = require('../helpers/bcrypt');
 const { generateToken } = require('../helpers/jwt');

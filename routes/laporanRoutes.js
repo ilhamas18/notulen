@@ -4,5 +4,6 @@ const authenticate = require("../middlewares/authenticate");
 
 router.use(authenticate);
 router.get("/getAuthLaporan/:kode_opd/:bulan/:tahun", LaporanController.getAllLaporan);
+router.get('/getLaporanDetail/:uuid', LaporanController.getLaporanDetail);
 
 module.exports = router;

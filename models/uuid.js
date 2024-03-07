@@ -11,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Uuid.hasOne(models.Undangan, { foreignKey: 'uuid' });
-      Uuid.hasOne(models.Notulen, { foreignKey: 'uuid' });
+      Uuid.hasMany(models.Peserta, { foreignKey: 'uuid' });
+      Uuid.hasMany(models.Notulen, { foreignKey: 'uuid' });
       Uuid.belongsTo(models.Perangkat_Daerah, { foreignKey: 'kode_opd' });
       Uuid.belongsTo(models.Pegawai, { foreignKey: 'nip_pegawai' });
       Uuid.belongsToMany(models.Sasaran, {

@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     signature: DataTypes.STRING(10000),
     status: DataTypes.STRING,
     atasan: DataTypes.JSON,
-    nip_atasan: DataTypes.STRING
+    nip_atasan: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Undangan',
