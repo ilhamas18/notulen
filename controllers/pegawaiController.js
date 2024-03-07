@@ -1,4 +1,3 @@
-const e = require('express');
 const { Pegawai, Perangkat_Daerah } = require('../models');
 const { hashPassword, comparePassword } = require('../helpers/bcrypt');
 const { generateToken } = require('../helpers/jwt');
@@ -99,7 +98,7 @@ class PegawaiController {
           }
         });
       }
-      // console.log(response, '<<<<');
+
       res.status(200).json({
         success: true,
         data: {
@@ -109,7 +108,6 @@ class PegawaiController {
         }
       })
     } catch (err) {
-      console.log(err, '<<<<');
       res.status(500).json({
         success: false,
         data: {
@@ -146,7 +144,6 @@ class PegawaiController {
   }
 
   static getOnePegawai = async (req, res) => {
-    console.log(req.params);
     try {
       const response = await Pegawai.findOne({
         where: { nip: req.params.nip },
@@ -320,6 +317,64 @@ class PegawaiController {
     }
   }
 
+  static updatePegawai = async (req, res) => {
+    try {
+      const payload = {
+        nama: req.body.nama,
+        nip: req.body.nip,
+        password: hashPassword(req.body.password),
+        pangkat: req.body.pangkat,
+        nama_pangkat: req.body.nama_pangkat,
+        jabatan: req.body.jabatan,
+        role: req.body.role,
+        status: req.body.status,
+        kode_opd: req.body.kode_opd,
+      }
+
+      const response = await Pegawai.update(payload, {
+        where: { nip: req.params.nip }
+      });
+
+      res.status(201).json({
+        success: true,
+        data: {
+          code: 201,
+          message: 'Data tagging berhasil ditambahkan',
+          data: response
+        }
+      })
+    } catch (err) {
+      console.log(err, '>>>');
+      if (err.name === 'SequelizeDatabaseError') {
+        res.status(400).json({
+          success: false,
+          data: {
+            code: 400,
+            message: 'Periksa kembali data Anda!',
+            data: err.message
+          }
+        })
+      } else if (err.name === 'SequelizeUniqueConstraintError') {
+        res.status(400).json({
+          success: false,
+          data: {
+            code: 400,
+            message: 'NIK sudah terdaftar'
+          }
+        })
+      } else {
+        res.status(500).json({
+          success: false,
+          data: {
+            code: 500,
+            message: 'Internal server error',
+            data: err
+          }
+        })
+      }
+    }
+  }
+
   static login = async (req, res) => {
     try {
       const user = await Pegawai.findOne({
@@ -334,47 +389,47 @@ class PegawaiController {
             message: 'NIP tidak ditemukan'
           }
         })
-      }
+      } else {
+        const comparedPassword = comparePassword(req.body.password, user.dataValues.password);
 
-      const comparedPassword = comparePassword(req.body.password, user.dataValues.password);
+        if (!comparedPassword) {
+          res.status(400).json({
+            success: false,
+            data: {
+              code: 400,
+              message: 'Password yang Anda masukkan salah'
+            }
+          })
+        } else {
+          const access_token = generateToken({
+            id: user.id,
+            nama: user.nama,
+            nip: user.nip,
+            pangkat: user.pangkat,
+            namaPangkat: user.nama_pangkat,
+            posisi: user.jabatan,
+            role: user.role,
+          })
 
-      if (!comparedPassword) {
-        res.status(400).json({
-          success: false,
-          data: {
-            code: 400,
-            message: 'Password yang Anda masukkan salah'
-          }
-        })
-      }
-
-      const access_token = generateToken({
-        id: user.id,
-        nama: user.nama,
-        nip: user.nip,
-        pangkat: user.pangkat,
-        namaPangkat: user.nama_pangkat,
-        posisi: user.jabatan,
-        role: user.role,
-      })
-
-      res.status(200).json({
-        success: true,
-        data: {
-          code: 200,
-          message: "Success",
-          data: {
-            access_token
-          }
+          res.status(200).json({
+            success: true,
+            data: {
+              code: 200,
+              message: "Success",
+              data: {
+                access_token
+              }
+            }
+          })
         }
-      })
+      }
     } catch (err) {
       res.status(500).json({
         success: false,
         data: {
           code: 500,
           message: "Internet server error",
-          data: err
+          data: err.message
         }
       })
     }

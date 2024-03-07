@@ -3,24 +3,24 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class File_Pendukung extends Model {
+  class Peserta extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      File_Pendukung.belongsTo(models.Notulen, { foreignKey: 'id_notulen' });
+      Peserta.belongsTo(models.Uuid, { foreignKey: 'uuid' });
     }
   }
-  File_Pendukung.init({
-    title: DataTypes.STRING,
-    nama_file: DataTypes.STRING,
-    file_url: DataTypes.STRING,
-    id_notulen: DataTypes.INTEGER
+  Peserta.init({
+    uuid: DataTypes.STRING,
+    jumlah_peserta: DataTypes.NUMBER,
+    jenis_peserta: DataTypes.STRING,
+    tanggal: DataTypes.JSON
   }, {
     sequelize,
-    modelName: 'File_Pendukung',
+    modelName: 'Peserta',
   });
-  return File_Pendukung;
+  return Peserta;
 };

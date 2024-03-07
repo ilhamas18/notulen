@@ -9,8 +9,19 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      tagging: {
-        type: Sequelize.JSON,
+      uuid: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Harap masukkan uuid!",
+          },
+        },
+        references: {
+          model: "Uuids",
+          key: "uuid",
+        },
       },
       tanggal: {
         type: Sequelize.JSON,
@@ -39,22 +50,10 @@ module.exports = {
       acara: {
         type: Sequelize.STRING,
       },
-      pelapor: {
-        type: Sequelize.JSON,
-      },
       atasan: {
         type: Sequelize.JSON,
       },
       status: {
-        type: Sequelize.STRING,
-      },
-      hari: {
-        type: Sequelize.STRING,
-      },
-      bulan: {
-        type: Sequelize.STRING,
-      },
-      tahun: {
         type: Sequelize.STRING,
       },
       link_img_foto: {
@@ -72,38 +71,14 @@ module.exports = {
       link_img_pendukung: {
         type: Sequelize.JSON,
       },
+      signature: {
+        type: Sequelize.STRING(10000)
+      },
+      signature_atasan: {
+        type: Sequelize.STRING(10000)
+      },
       keterangan: {
         type: Sequelize.STRING,
-      },
-      kode_opd: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: {
-            args: true,
-            msg: "Harap masukkan OPD terkait!",
-          },
-        },
-        references: {
-          model: "Perangkat_Daerahs",
-          key: "kode_opd",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      nip_pegawai: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: {
-            args: true,
-            msg: "Harap masukkan pegawai terkait!",
-          },
-        },
-        references: {
-          model: "Pegawais",
-          key: "nip",
-        },
       },
       nip_atasan: {
         type: Sequelize.STRING,
@@ -112,16 +87,6 @@ module.exports = {
           notEmpty: {
             args: true,
             msg: "Harap masukkan pegawai terkait!",
-          },
-        },
-      },
-      id_sasaran: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: {
-            args: true,
-            msg: "Harap masukkan sasaran",
           },
         },
       },

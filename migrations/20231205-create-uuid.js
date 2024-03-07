@@ -2,16 +2,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Pegawais', {
+    await queryInterface.createTable('Uuids', {
       id: {
         allowNull: false,
         autoIncrement: true,
+        primaryKey: true,
         type: Sequelize.INTEGER
       },
-      nama: {
-        type: Sequelize.STRING
-      },
-      nip: {
+      uuid: {
         type: Sequelize.STRING,
         unique: true,
         allowNull: false,
@@ -19,27 +17,18 @@ module.exports = {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'NIP tidak boleh kosong!'
+            msg: 'uuid tidak boleh kosong!'
           },
         }
       },
-      password: {
+      hari: {
         type: Sequelize.STRING
       },
-      pangkat: {
+      bulan: {
         type: Sequelize.STRING
       },
-      nama_pangkat: {
+      tahun: {
         type: Sequelize.STRING
-      },
-      jabatan: {
-        type: Sequelize.STRING
-      },
-      role: {
-        type: Sequelize.INTEGER
-      },
-      status: {
-        type: Sequelize.INTEGER
       },
       kode_opd: {
         type: Sequelize.STRING,
@@ -47,15 +36,29 @@ module.exports = {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Harap masukkan OPD terkait!'
-          }
+            msg: "Harap masukkan OPD terkait!",
+          },
         },
         references: {
-          model: 'Perangkat_Daerahs',
-          key: 'kode_opd'
+          model: "Perangkat_Daerahs",
+          key: "kode_opd",
         },
-        onUpdate: 'CASCADE', // Optional: Add cascading options as needed
-        onDelete: 'CASCADE',
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      nip_pegawai: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Harap masukkan pegawai terkait!",
+          },
+        },
+        references: {
+          model: "Pegawais",
+          key: "nip",
+        },
       },
       createdAt: {
         allowNull: false,
@@ -68,6 +71,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Pegawais');
+    await queryInterface.dropTable('Uuids');
   }
 };

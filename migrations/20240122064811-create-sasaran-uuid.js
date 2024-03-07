@@ -2,35 +2,40 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('File_Pendukungs', {
+    await queryInterface.createTable('Sasaran_Uuids', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title: {
-        type: Sequelize.STRING
-      },
-      nama_file: {
-        type: Sequelize.STRING
-      },
-      file_url: {
-        type: Sequelize.STRING
-      },
-      id_notulen: {
-        type: Sequelize.INTEGER,
+      id_uuid: {
+        type: Sequelize.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Harap masukkan notulen terkait!'
-          }
+            msg: "Harap masukkan notulen",
+          },
         },
         references: {
-          model: 'Notulens',
-          key: 'id'
-        }
+          model: "Uuids",
+          key: "uuid",
+        },
+      },
+      id_sasaran: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Harap masukkan sasaran",
+          },
+        },
+        references: {
+          model: "Sasarans",
+          key: "id_sasaran",
+        },
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +48,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('File_Pendukungs');
+    await queryInterface.dropTable('Sasaran_Uuids');
   }
 };

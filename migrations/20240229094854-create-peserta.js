@@ -2,15 +2,32 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Taggings', {
+    await queryInterface.createTable('Peserta', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      nama_tagging: {
+      jumlah_peserta: {
+        type: Sequelize.INTEGER
+      },
+      jenis_peserta: {
         type: Sequelize.STRING
+      },
+      uuid: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Harap masukkan uuid!",
+          },
+        },
+        references: {
+          model: "Uuids",
+          key: "uuid",
+        },
       },
       createdAt: {
         allowNull: false,
@@ -23,6 +40,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Taggings');
+    await queryInterface.dropTable('Peserta');
   }
 };

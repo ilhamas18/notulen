@@ -38,13 +38,12 @@ const authenticate = async (req, res, next) => {
         }
       })
     } else {
-
       res.status(500).json({
         success: false,
         data: {
           code: 500,
           message: 'Trouble network',
-          data: err.message
+          data: err
         }
       })
     }

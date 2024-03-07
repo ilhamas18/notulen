@@ -1,26 +1,27 @@
-const express = require("express");
 const router = require("express").Router();
 const NotulenController = require("../controllers/notulenController");
 const authenticate = require("../middlewares/authenticate");
-// const upload = require("../helpers/s3");
-const upload = require('../helpers/upload');
 const {
-  authorize,
-  authorizeUser,
-  authorizeAdminOPD,
   authorizeVerifikator,
 } = require("../middlewares/authorize");
 
 router.get("/getFile", NotulenController.downloadFile);
-router.get("/deleteFile", NotulenController.deleteFile);
+router.delete("/deleteFile", NotulenController.deleteFile);
 router.use(authenticate);
 router.get("/getNotulenDetail/:id", NotulenController.getOneNotulen);
 router.get("/getAuthNotulen/:kode_opd/:nip/:bulan/:tahun", NotulenController.getAuthNotulen);
-router.get("/getAllNotulens", NotulenController.getAllNotulen);
-router.post("/addNotulen", authorizeUser, NotulenController.addNotulen);
-router.put("/addTagging/:id", authorizeAdminOPD, NotulenController.addTagging);
+router.get('/getAgreement/:kode_opd/:bulan/:tahun', NotulenController.getNeedAgreement)
+router.get("/getAllNotulens/:kode_opd", NotulenController.getAllNotulen);
+router.post("/addNotulen", NotulenController.addNotulen);
 router.put("/editNotulen/:id", NotulenController.editNotulen);
 router.put("/updateStatus/:id", authorizeVerifikator, NotulenController.updateStatus);
 router.post('/syncSasaran', NotulenController.syncSasaran);
+router.post("/addTagging", NotulenController.addTagging);
+router.delete("/deleteTagging", NotulenController.deleteTagging);
+router.post('/addSasaran', NotulenController.addSasaran);
+router.delete('/deleteSasaran', NotulenController.deleteSasaran);
+router.put('/archieve/:id', NotulenController.archievedNotulen);
+router.get('/getArchieve', NotulenController.getArchieveNotulen);
+router.delete('/deleteNotulen/:id', NotulenController.deleteNotulen)
 
 module.exports = router;

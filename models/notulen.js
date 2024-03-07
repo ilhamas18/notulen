@@ -10,13 +10,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Notulen.belongsTo(models.Perangkat_Daerah, { foreignKey: 'kode_opd' });
-      Notulen.belongsTo(models.Pegawai, { foreignKey: 'nip_pegawai' });
-      Notulen.hasMany(models.File_Pendukung, { foreignKey: 'id_notulen' });
+      Notulen.belongsTo(models.Uuid, { foreignKey: 'uuid' });
     }
   }
   Notulen.init({
-    tagging: DataTypes.JSON,
+    uuid: DataTypes.STRING,
     tanggal: DataTypes.JSON,
     waktu: DataTypes.STRING,
     pendahuluan: DataTypes.STRING(1234),
@@ -26,22 +24,17 @@ module.exports = (sequelize, DataTypes) => {
     tindak_lanjut: DataTypes.STRING(10000),
     lokasi: DataTypes.STRING,
     acara: DataTypes.STRING,
-    pelapor: DataTypes.JSON,
     atasan: DataTypes.JSON,
     status: DataTypes.STRING,
-    hari: DataTypes.STRING,
-    bulan: DataTypes.STRING,
-    tahun: DataTypes.STRING,
     link_img_foto: DataTypes.JSON,
     link_img_daftar_hadir: DataTypes.JSON,
     link_img_surat_undangan: DataTypes.JSON,
     link_img_spj: DataTypes.JSON,
     link_img_pendukung: DataTypes.JSON,
+    signature: DataTypes.STRING(10000),
+    signature_atasan: DataTypes.STRING(10000),
     keterangan: DataTypes.STRING,
-    kode_opd: DataTypes.STRING,
-    nip_pegawai: DataTypes.STRING,
     nip_atasan: DataTypes.STRING,
-    id_sasaran: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Notulen',
