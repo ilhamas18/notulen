@@ -393,7 +393,7 @@ class UndanganController {
           success: false,
           data: {
             code: 404,
-            message: "ID Laporan tidak ditemukan!",
+            message: "ID Undangan tidak ditemukan!",
             data: response,
           },
         });
