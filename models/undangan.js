@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.STRING,
     atasan: DataTypes.JSON,
     nip_atasan: DataTypes.STRING,
+    lampiran: DataTypes.STRING(10000)
   }, {
     sequelize,
     modelName: 'Undangan',

@@ -453,7 +453,8 @@ class UndanganController {
             signature: req.body.signature,
             status: req.body.status,
             atasan: req.body.atasan,
-            nip_atasan: req.body.nip_atasan
+            nip_atasan: req.body.nip_atasan,
+            lampiran: req.body.lampiran
           })
             .then(response => {
               res.status(201).json({
@@ -466,7 +467,14 @@ class UndanganController {
               });
             })
             .catch(err => {
-              console.log(err, '>>');
+              Uuid.destroy({
+                where: {
+                  uuid: req.body.uuid
+                }
+              })
+                .then(_ => {
+                  console.log('BERHASIL TERHAPUS');
+                })
               if (err.name === "SequelizeDatabaseError") {
                 res.status(400).json({
                   success: false,
@@ -537,7 +545,8 @@ class UndanganController {
         signature: req.body.signature,
         status: req.body.status,
         atasan: req.body.atasan,
-        nip_atasan: req.body.nip_atasan
+        nip_atasan: req.body.nip_atasan,
+        lampiran: req.body.lampiran
       }
 
       if (req.body.status !== "Disetujui") {
