@@ -123,15 +123,14 @@ class UndanganController {
             status: {
               [Op.not]: 'archieve'
             },
+            tanggal_surat: {
+              [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+            }
           },
           order: [["createdAt", "DESC"]],
           include: [
             {
               model: Uuid,
-              where: {
-                bulan: req.params.bulan,
-                tahun: req.params.tahun
-              },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               },
@@ -190,6 +189,9 @@ class UndanganController {
             status: {
               [Op.not]: 'archieve'
             },
+            tanggal_surat: {
+              [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+            }
           },
           order: [["createdAt", "DESC"]],
           include: [
@@ -197,8 +199,6 @@ class UndanganController {
               model: Uuid,
               where: {
                 kode_opd: req.params.kode_opd,
-                bulan: req.params.bulan,
-                tahun: req.params.tahun
               },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
@@ -258,6 +258,9 @@ class UndanganController {
             status: {
               [Op.not]: 'archieve'
             },
+            tanggal_surat: {
+              [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+            }
           },
           order: [["createdAt", "DESC"]],
           include: [
@@ -265,8 +268,6 @@ class UndanganController {
               model: Uuid,
               where: {
                 nip_pegawai: req.decoded.nip,
-                bulan: req.params.bulan,
-                tahun: req.params.tahun,
               },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
@@ -331,6 +332,7 @@ class UndanganController {
         });
       }
     } catch (err) {
+      console.log(err.message, '???');
       res.status(500).json({
         success: false,
         data: {
@@ -427,9 +429,6 @@ class UndanganController {
         },
         defaults: {
           uuid: req.body.uuid,
-          hari: req.body.hari,
-          bulan: req.body.bulan,
-          tahun: req.body.tahun,
           kode_opd: req.body.kode_opd,
           nip_pegawai: req.body.nip_pegawai
         }
@@ -449,6 +448,7 @@ class UndanganController {
             lokasi: req.body.lokasi,
             acara: req.body.acara,
             catatan: req.body.catatan,
+            tanggal_surat: req.body.tanggal_surat,
             penutup: req.body.penutup,
             signature: req.body.signature,
             status: req.body.status,
@@ -542,6 +542,7 @@ class UndanganController {
         acara: req.body.acara,
         catatan: req.body.catatan,
         penutup: req.body.penutup,
+        tanggal_surat: tanggal_surat,
         signature: req.body.signature,
         status: req.body.status,
         atasan: req.body.atasan,

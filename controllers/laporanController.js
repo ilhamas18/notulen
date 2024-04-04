@@ -6,10 +6,6 @@ class LaporanController {
     try {
       if (req.decoded.role == 1) {
         const response = await Uuid.findAll({
-          where: {
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
-          },
           order: [["createdAt", "DESC"]],
           include: [
             {
@@ -38,7 +34,7 @@ class LaporanController {
               where: {
                 status: {
                   [Op.not]: 'archieve'
-                }
+                },
               },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
@@ -57,7 +53,7 @@ class LaporanController {
               where: {
                 status: {
                   [Op.not]: 'archieve'
-                }
+                },
               },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
@@ -78,8 +74,6 @@ class LaporanController {
         const response = await Uuid.findAll({
           where: {
             kode_opd: req.params.kode_opd,
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
           },
           order: [["createdAt", "DESC"]],
           include: [
@@ -109,6 +103,9 @@ class LaporanController {
               where: {
                 status: {
                   [Op.not]: 'archieve'
+                },
+                tanggal_surat: {
+                  [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
                 }
               },
               attributes: {
@@ -128,7 +125,7 @@ class LaporanController {
               where: {
                 status: {
                   [Op.not]: 'archieve'
-                }
+                },
               },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
@@ -160,8 +157,6 @@ class LaporanController {
         const response = await Uuid.findAll({
           where: {
             nip_pegawai: req.decoded.nip,
-            bulan: req.params.bulan,
-            tahun: req.params.tahun,
           },
           order: [["createdAt", "DESC"]],
           include: [
@@ -191,7 +186,7 @@ class LaporanController {
               where: {
                 status: {
                   [Op.not]: 'archieve'
-                }
+                },
               },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
@@ -209,7 +204,7 @@ class LaporanController {
               required: false,
               where: {
                 status: {
-                  [Op.not]: 'archieve'
+                  [Op.not]: 'archieve',
                 }
               },
               attributes: {

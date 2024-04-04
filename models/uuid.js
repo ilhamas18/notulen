@@ -32,9 +32,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       primaryKey: true
     },
-    hari: DataTypes.STRING,
-    bulan: DataTypes.STRING,
-    tahun: DataTypes.STRING,
     kode_opd: DataTypes.STRING,
     nip_pegawai: DataTypes.STRING
   }, {

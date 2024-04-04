@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     penutup: DataTypes.STRING(10000),
     signature: DataTypes.STRING(10000),
     status: DataTypes.STRING,
+    tanggal_surat: DataTypes.STRING,
     atasan: DataTypes.JSON,
     nip_atasan: DataTypes.STRING,
     lampiran: DataTypes.STRING(10000)

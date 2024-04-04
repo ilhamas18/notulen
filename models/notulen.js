@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     acara: DataTypes.STRING,
     atasan: DataTypes.JSON,
     status: DataTypes.STRING,
+    tanggal_surat: DataTypes.STRING,
     link_img_foto: DataTypes.JSON,
     link_img_daftar_hadir: DataTypes.JSON,
     link_img_surat_undangan: DataTypes.JSON,

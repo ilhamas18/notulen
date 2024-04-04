@@ -9,7 +9,7 @@ router.get("/getFile", NotulenController.downloadFile);
 router.delete("/deleteFile", NotulenController.deleteFile);
 router.use(authenticate);
 router.get("/getNotulenDetail/:id", NotulenController.getOneNotulen);
-router.get("/getAuthNotulen/:kode_opd/:nip/:bulan/:tahun", NotulenController.getAuthNotulen);
+router.get("/getAuthNotulen/:kode_opd/:tanggal_surat", NotulenController.getAuthNotulen);
 router.get('/getAgreement/:kode_opd/:bulan/:tahun', NotulenController.getNeedAgreement)
 router.get("/getAllNotulens/:kode_opd", NotulenController.getAllNotulen);
 router.post("/addNotulen", NotulenController.addNotulen);

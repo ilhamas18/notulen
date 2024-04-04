@@ -272,6 +272,9 @@ class NotulenController {
             status: {
               [Op.not]: 'archieve'
             },
+            tanggal_surat: {
+              [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+            }
           },
           order: [["createdAt", "DESC"]],
           attributes: {
@@ -280,10 +283,6 @@ class NotulenController {
           include: [
             {
               model: Uuid,
-              where: {
-                bulan: req.params.bulan,
-                tahun: req.params.tahun,
-              },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
               },
@@ -342,6 +341,9 @@ class NotulenController {
             status: {
               [Op.not]: 'archieve'
             },
+            tanggal_surat: {
+              [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+            }
           },
           order: [["createdAt", "DESC"]],
           attributes: {
@@ -352,8 +354,6 @@ class NotulenController {
               model: Uuid,
               where: {
                 kode_opd: req.params.kode_opd,
-                bulan: req.params.bulan,
-                tahun: req.params.tahun,
               },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
@@ -413,6 +413,9 @@ class NotulenController {
             status: {
               [Op.not]: 'archieve'
             },
+            tanggal_surat: {
+              [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+            }
           },
           order: [["createdAt", "DESC"]],
           attributes: {
@@ -423,8 +426,6 @@ class NotulenController {
               model: Uuid,
               where: {
                 nip_pegawai: req.decoded.nip,
-                bulan: req.params.bulan,
-                tahun: req.params.tahun,
               },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
@@ -587,9 +588,6 @@ class NotulenController {
         },
         defaults: {
           uuid: req.body.uuid,
-          hari: req.body.hari,
-          bulan: req.body.bulan,
-          tahun: req.body.tahun,
           kode_opd: req.body.kode_opd,
           nip_pegawai: req.body.nip_pegawai
         }
@@ -610,6 +608,7 @@ class NotulenController {
             acara: req.body.acara,
             atasan: req.body.atasan,
             status: req.body.status,
+            tanggal_surat: req.body.tanggal_surat,
             id_sasaran: req.body.id_sasaran,
             link_img_surat_undangan: req.body.link_img_surat_undangan,
             link_img_daftar_hadir: req.body.link_img_daftar_hadir,

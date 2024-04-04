@@ -57,7 +57,7 @@ module.exports = {
           model: 'Perangkat_Daerahs',
           key: 'kode_opd'
         },
-        onUpdate: 'CASCADE', // Optional: Add cascading options as needed
+        onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
       createdAt: {
