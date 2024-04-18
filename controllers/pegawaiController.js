@@ -193,14 +193,9 @@ class PegawaiController {
     try {
       const fetchPegawai = await axios({
         method: 'post',
-        url: `https://skp.madiunkota.go.id/api/data-pegawai-all/${req.params.kode_opd}/2023/${currentMonth}`,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Accept": 'application/x-www-form-urlencoded'
-        },
+        url: `https://kak.madiunkota.go.id/api/opd/daftar_pegawai.json`,
         data: {
-          username: 'bappeda',
-          password: 'bapp7832KH'
+          kode_opd: req.params.kode_opd
         }
       })
 
@@ -213,45 +208,9 @@ class PegawaiController {
             data: fetchPegawai.data.data
           }
         })
-        // fetchPegawai.data.data.map(el => {
-        //   Pegawai.findOrCreate({
-        //     where: {
-        //       nip: el.nip
-        //     },
-        //     defaults: {
-        //       nama: el.nama,
-        //       nip: el.nip,
-        //       password: 'Bappeda@123',
-        //       pangkat: el.pangkat,
-        //       nama_pangkat: el.namapangkat,
-        //       jabatan: el.jabatan,
-        //       role: 1,
-        //       kode_opd: el.unit_id,
-        //     }
-        //   })
-        //     .then(_ => {
-        //       res.status(200).json({
-        //         success: true,
-        //         data: {
-        //           code: 200,
-        //           message: 'Success',
-        //           data: 'Success add pegawai'
-        //         }
-        //       })
-        //     })
-        //     .catch(err => {
-        //       res.status(500).json({
-        //         success: false,
-        //         data: {
-        //           code: 500,
-        //           message: 'Jaringan server error',
-        //           data: err.message
-        //         }
-        //       })
-        //     })
-        // })
       }
     } catch (err) {
+      console.log(err.message, '///');
       res.status(500).json({
         success: false,
         data: {
