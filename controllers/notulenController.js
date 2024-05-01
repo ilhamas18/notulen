@@ -18,7 +18,6 @@ const unlinkAsync = promisify(fs.unlink)
 
 class NotulenController {
   static getAllNotulen = async (req, res) => {
-    const currentYear = new Date().getFullYear()
     try {
       if (req.decoded.role == 1) {
         const response = await Notulen.findAll({
@@ -26,19 +25,19 @@ class NotulenController {
             status: {
               [Op.not]: 'archieve'
             },
+            tanggal_surat: {
+              [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+            }
           },
           order: [["createdAt", "DESC"]],
           attributes: {
-            exclude: [['createdAt', 'updatedAt']]
+            exclude: ['createdAt', 'updatedAt']
           },
           include: [
             {
               model: Uuid,
-              where: {
-                tahun: currentYear.toString(),
-              },
               attributes: {
-                exclude: [['createdAt', 'updatedAt']]
+                exclude: ['createdAt', 'updatedAt']
               },
               include: [
                 {
@@ -64,7 +63,11 @@ class NotulenController {
             status: {
               [Op.not]: 'archieve'
             },
+            tanggal_surat: {
+              [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+            }
           },
+          order: [['createdAt', 'DESC']],
           attributes: {
             exclude: [['createdAt', 'updatedAt']]
           },
@@ -72,11 +75,10 @@ class NotulenController {
             {
               model: Uuid,
               where: {
-                kode_opd: req.params.kode_opd,
-                tahun: currentYear.toString()
+                kode_opd: req.params.kode_opd
               },
               attributes: {
-                exclude: [['createdAt', 'updatedAt']]
+                exclude: ['createdAt', 'updatedAt']
               },
               include: [
                 {
@@ -86,7 +88,7 @@ class NotulenController {
                 {
                   model: Pegawai,
                   attributes: {
-                    exclude: [['createdAt', 'updatedAt', 'password']]
+                    exclude: ['createdAt', 'updatedAt', 'password']
                   }
                 },
               ]
@@ -110,6 +112,9 @@ class NotulenController {
               [Op.not]: 'archieve'
             },
             nip_atasan: req.decoded.nip,
+            tanggal_surat: {
+              [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+            }
           },
           order: [["createdAt", "DESC"]],
           attributes: {
@@ -119,11 +124,10 @@ class NotulenController {
             {
               model: Uuid,
               where: {
-                kode_opd: req.params.kode_opd,
-                tahun: currentYear.toString()
+                kode_opd: req.params.kode_opd
               },
               attributes: {
-                exclude: [['createdAt', 'updatedAt']]
+                exclude: ['createdAt', 'updatedAt']
               },
               include: [
                 {
@@ -133,7 +137,7 @@ class NotulenController {
                 {
                   model: Pegawai,
                   attributes: {
-                    exclude: [['createdAt', 'updatedAt', 'password']]
+                    exclude: ['createdAt', 'updatedAt', 'password']
                   }
                 },
               ]
@@ -146,6 +150,9 @@ class NotulenController {
                 status: {
                   [Op.not]: 'archieve'
                 },
+                tanggal_surat: {
+                  [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+                }
               },
               order: [["createdAt", "DESC"]],
               include: [
@@ -153,11 +160,10 @@ class NotulenController {
                   model: Uuid,
                   where: {
                     kode_opd: req.params.kode_opd,
-                    nip_pegawai: req.decoded.nip,
-                    tahun: currentYear.toString()
+                    nip_pegawai: req.decoded.nip
                   },
                   attributes: {
-                    exclude: [['createdAt', 'updatedAt']]
+                    exclude: ['createdAt', 'updatedAt']
                   },
                   include: [
                     {
@@ -167,7 +173,7 @@ class NotulenController {
                     {
                       model: Pegawai,
                       attributes: {
-                        exclude: [['createdAt', 'updatedAt', 'password']]
+                        exclude: ['createdAt', 'updatedAt', 'password']
                       }
                     },
                   ]
@@ -203,20 +209,22 @@ class NotulenController {
             status: {
               [Op.not]: 'archieve'
             },
+            tanggal_surat: {
+              [Op.like]: `%${decodeURIComponent(req.params.tanggal_surat)}%`
+            }
           },
           order: [["createdAt", "DESC"]],
           attributes: {
-            exclude: [['createdAt', 'updatedAt']]
+            exclude: ['createdAt', 'updatedAt']
           },
           include: [
             {
               model: Uuid,
               where: {
-                nip_pegawai: req.decoded.nip,
-                tahun: currentYear.toString()
+                nip_pegawai: req.decoded.nip
               },
               attributes: {
-                exclude: [['createdAt', 'updatedAt']]
+                exclude: ['createdAt', 'updatedAt']
               },
               include: [
                 {
@@ -226,7 +234,7 @@ class NotulenController {
                 {
                   model: Pegawai,
                   attributes: {
-                    exclude: [['createdAt', 'updatedAt', 'password']]
+                    exclude: ['createdAt', 'updatedAt', 'password']
                   }
                 },
               ]
@@ -253,6 +261,7 @@ class NotulenController {
         });
       }
     } catch (err) {
+      console.log(err.message);
       res.status(500).json({
         success: false,
         data: {
@@ -515,28 +524,34 @@ class NotulenController {
               {
                 model: Perangkat_Daerah,
                 attributes: {
-                  exclude: [['createdAt', 'updatedAt']]
+                  exclude: ['createdAt', 'updatedAt']
                 }
               },
               {
                 model: Pegawai,
                 attributes: {
-                  exclude: [['createdAt', 'updatedAt', 'password']]
+                  exclude: ['createdAt', 'updatedAt', 'password']
                 }
               },
               {
                 model: Sasaran,
                 attributes: {
-                  exclude: [['createdAt', 'updatedAt']]
+                  exclude: ['createdAt', 'updatedAt']
                 }
               },
               {
                 model: Tagging,
                 attributes: {
-                  exclude: [['createdAt', 'updatedAt']]
+                  exclude: ['createdAt', 'updatedAt']
                 }
               },
             ]
+          },
+          {
+            model: Pegawai,
+            attributes: {
+              exclude: ['createdAt', 'updatedAt', 'password']
+            }
           }
         ],
       });
@@ -581,7 +596,7 @@ class NotulenController {
   };
 
   static addNotulen = async (req, res) => {
-    if (req.decoded.role == 2 || req.decoded.role == 3 || req.decoded.role == 4) {
+    if (req.decoded.role == 4) {
       Uuid.findOrCreate({
         where: {
           uuid: req.body.uuid
@@ -617,6 +632,7 @@ class NotulenController {
             link_img_pendukung: req.body.link_img_pendukung,
             signature: req.body.signature,
             nip_atasan: req.body.nip_atasan,
+            penanggungjawab: req.body.penanggungjawab
           }
 
           Notulen.create(payload)
@@ -747,42 +763,52 @@ class NotulenController {
   };
 
   static updateStatus = async (req, res) => {
-    try {
-      const payload = {
-        status: req.body.status,
-        keterangan: req.body.keterangan,
-        signature_atasan: req.body.signature_atasan
-      };
+    if (req.decoded.role == 3 || req.body.status === "-") {
+      try {
+        const payload = {
+          status: req.body.status,
+          keterangan: req.body.keterangan,
+          signature_atasan: req.body.signature_atasan
+        };
 
-      const response = await Notulen.update(payload, {
-        where: { id: +req.params.id },
-      });
+        const response = await Notulen.update(payload, {
+          where: { id: +req.params.id }
+        });
 
-      if (response[0] == 0) {
-        res.status(404).json({
+        if (response[0] == 0) {
+          res.status(404).json({
+            success: false,
+            data: {
+              code: 404,
+              message: "ID Komponen tidak ditemukan!",
+            },
+          });
+        } else {
+          res.status(200).json({
+            success: true,
+            data: {
+              code: 200,
+              message: "Berhasil update data pegawai",
+              data: response,
+            },
+          });
+        }
+      } catch (err) {
+        res.status(500).json({
           success: false,
           data: {
-            code: 404,
-            message: "ID Komponen tidak ditemukan!",
-          },
-        });
-      } else {
-        res.status(200).json({
-          success: true,
-          data: {
-            code: 200,
-            message: "Berhasil update data pegawai",
-            data: response,
+            code: 500,
+            message: "Internal server error",
+            data: err,
           },
         });
       }
-    } catch (err) {
-      res.status(500).json({
+    } else {
+      res.status(401).json({
         success: false,
         data: {
-          code: 500,
-          message: "Internal server error",
-          data: err,
+          code: 401,
+          message: "Unauthorize as verificator"
         },
       });
     }
@@ -1001,8 +1027,6 @@ class NotulenController {
               model: Uuid,
               where: {
                 kode_opd: req.params.kode_opd,
-                bulan: req.params.bulan,
-                tahun: req.params.tahun,
               },
               attributes: {
                 exclude: [['createdAt', 'updatedAt']]
@@ -1215,6 +1239,77 @@ class NotulenController {
           });
         }
       }
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        data: {
+          code: 500,
+          message: "Internal server error",
+          data: err,
+        },
+      });
+    }
+  }
+
+  static showResponsibleNotulen = async (req, res) => {
+    try {
+      const response = await Notulen.findAll({
+        where: {
+          penanggungjawab: {
+            [Op.eq]: req.params.nip
+          },
+          status: {
+            [Op.not]: 'archieve'
+          }
+        },
+        order: [['createdAt', 'DESC']],
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        },
+        include: [
+          {
+            model: Uuid,
+            attributes: {
+              exclude: [['createdAt', 'updatedAt']]
+            },
+            include: [
+              {
+                model: Perangkat_Daerah,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt']]
+                }
+              },
+              {
+                model: Pegawai,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt', 'password']]
+                }
+              },
+              {
+                model: Sasaran,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt']]
+                }
+              },
+              {
+                model: Tagging,
+                attributes: {
+                  exclude: [['createdAt', 'updatedAt']]
+                }
+              },
+            ]
+          }
+        ]
+      })
+
+      res.status(200).json({
+        success: true,
+        data: {
+          code: 200,
+          message: "Success",
+          data: response,
+        },
+      });
     } catch (err) {
       res.status(500).json({
         success: false,

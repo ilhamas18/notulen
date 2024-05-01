@@ -7,6 +7,58 @@ const {
 } = require('../models');
 
 class PesertaController {
+  static showResponsiblePeserta = async (req, res) => {
+    try {
+      const response = await Peserta.findAll({
+        where: {
+          penanggungjawab: req.params.nip
+        },
+        order: [['createdAt', 'DESC']],
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        },
+        include: [
+          {
+            model: Uuid,
+            attributes: {
+              exclude: ['createdAt', 'updatedAt']
+            },
+            include: [
+              {
+                model: Perangkat_Daerah,
+                attributes: ['kode_opd', 'nama_opd', 'singkatan']
+              },
+              {
+                model: Pegawai,
+                attributes: {
+                  exclude: ['createdAt', 'updatedAt', 'password']
+                }
+              }
+            ]
+          }
+        ]
+      })
+
+      res.status(200).json({
+        success: true,
+        data: {
+          code: 200,
+          message: "Success",
+          data: response,
+        },
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        data: {
+          code: 500,
+          message: "Internal server error",
+          data: err,
+        },
+      });
+    }
+  }
+
   static getOnePeserta = async (req, res) => {
     try {
       const response = await Peserta.findOne({
@@ -14,31 +66,31 @@ class PesertaController {
           id: +req.params.id,
         },
         attributes: {
-          exclude: [['createdAt', 'updatedAt']]
+          exclude: ['createdAt', 'updatedAt']
         },
         include: [
           {
             model: Uuid,
             attributes: {
-              exclude: [['createdAt', 'updatedAt']]
+              exclude: ['createdAt', 'updatedAt']
             },
             include: [
               {
                 model: Perangkat_Daerah,
                 attributes: {
-                  exclude: [['createdAt', 'updatedAt']]
+                  exclude: ['createdAt', 'updatedAt']
                 }
               },
               {
                 model: Pegawai,
                 attributes: {
-                  exclude: [['createdAt', 'updatedAt', 'password']]
+                  exclude: ['createdAt', 'updatedAt', 'password']
                 }
               },
               {
                 model: Undangan,
                 attributes: {
-                  exclude: [['createdAt', 'updatedAt']]
+                  exclude: ['createdAt', 'updatedAt']
                 }
               },
             ]
@@ -78,18 +130,15 @@ class PesertaController {
   }
 
   static addPeserta = async (req, res) => {
-    if (req.decoded.role == 2 || req.decoded.role == 3 || req.decoded.role == 4) {
+    if (req.decoded.role == 4) {
       Uuid.findOrCreate({
         where: {
           uuid: req.body.uuid
         },
         defaults: {
           uuid: req.body.uuid,
-          hari: req.body.hari,
-          bulan: req.body.bulan,
-          tahun: req.body.tahun,
           kode_opd: req.body.kode_opd,
-          nip_pegawai: req.body.nip_pegawai
+          nip_pegawai: req.body.nip_pegawai,
         }
       })
         .then(_ => {
@@ -97,7 +146,8 @@ class PesertaController {
             uuid: req.body.uuid,
             jumlah_peserta: req.body.jumlah_peserta,
             jenis_peserta: req.body.jenis_peserta,
-            tanggal: req.body.tanggal
+            tanggal: req.body.tanggal,
+            penanggungjawab: req.body.penanggungjawab
           }
 
           Peserta.create(payload)
@@ -112,6 +162,7 @@ class PesertaController {
               });
             })
             .catch(err => {
+              console.log(err);
               if (err.name === "SequelizeDatabaseError") {
                 res.status(400).json({
                   success: false,

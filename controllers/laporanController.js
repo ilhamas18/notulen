@@ -271,15 +271,23 @@ class LaporanController {
               }
             },
             attributes: {
-              exclude: [['createdAt', 'updatedAt']]
+              exclude: ['createdAt', 'updatedAt']
             }
           },
           {
             model: Peserta,
             required: false,
             attributes: {
-              exclude: [['createdAt', 'updatedAt']]
-            }
+              exclude: ['createdAt', 'updatedAt']
+            },
+            include: [
+              {
+                model: Pegawai,
+                attributes: {
+                  exclude: ['password', 'status', 'createdAt', 'updatedAt']
+                }
+              }
+            ]
           },
           {
             model: Notulen,
@@ -289,8 +297,16 @@ class LaporanController {
                 [Op.not]: 'archieve'
               }
             },
+            include: [
+              {
+                model: Pegawai,
+                attributes: {
+                  exclude: ['password', 'status', 'createdAt', 'updatedAt']
+                }
+              }
+            ],
             attributes: {
-              exclude: [['createdAt', 'updatedAt']]
+              exclude: ['createdAt', 'updatedAt']
             }
           }
         ]

@@ -25,7 +25,7 @@ class PegawaiController {
             data: response
           }
         })
-      } else if (req.decoded.role == 2) {
+      } else if (req.decoded.role == 2 || req.decoded.role == 3 || req.decoded.role == 4) {
         const response = await Pegawai.findAll({
           where: {
             kode_opd: req.params.kode_opd

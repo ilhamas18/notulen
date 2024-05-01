@@ -29,7 +29,7 @@ module.exports = {
       pangkat: {
         type: Sequelize.STRING
       },
-      nama_pangkat: {
+      golongan: {
         type: Sequelize.STRING
       },
       jabatan: {

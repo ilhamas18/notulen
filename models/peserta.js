@@ -11,13 +11,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Peserta.belongsTo(models.Uuid, { foreignKey: 'uuid' });
+      Peserta.belongsTo(models.Pegawai, { foreignKey: 'penanggungjawab' });
     }
   }
   Peserta.init({
     uuid: DataTypes.STRING,
     jumlah_peserta: DataTypes.NUMBER,
     jenis_peserta: DataTypes.STRING,
-    tanggal: DataTypes.JSON
+    tanggal: DataTypes.JSON,
+    penanggungjawab: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Peserta',

@@ -18,10 +18,10 @@ module.exports = {
       [
         {
           nama: "admin",
-          nip: "123456789012345678",
-          password: hashPassword('enotulen_kota_madiun'),
-          pangkat: "super_admin",
-          nama_pangkat: "super_admin",
+          nip: "bapppeko",
+          password: hashPassword('23456789'),
+          pangkat: "Pembina Utama",
+          golongan: "IV/e",
           jabatan: "super_admin",
           role: 1,
           kode_opd: "1234567890",

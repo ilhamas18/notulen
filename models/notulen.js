@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Notulen.belongsTo(models.Uuid, { foreignKey: 'uuid' });
+      Notulen.belongsTo(models.Pegawai, { foreignKey: 'penanggungjawab' });
     }
   }
   Notulen.init({
@@ -36,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     signature_atasan: DataTypes.STRING(10000),
     keterangan: DataTypes.STRING,
     nip_atasan: DataTypes.STRING,
+    penanggungjawab: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Notulen',

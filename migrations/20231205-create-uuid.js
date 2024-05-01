@@ -21,15 +21,6 @@ module.exports = {
           },
         }
       },
-      hari: {
-        type: Sequelize.STRING
-      },
-      bulan: {
-        type: Sequelize.STRING
-      },
-      tahun: {
-        type: Sequelize.STRING
-      },
       kode_opd: {
         type: Sequelize.STRING,
         allowNull: false,
