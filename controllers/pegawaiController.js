@@ -349,7 +349,8 @@ class PegawaiController {
           }
         })
       } else {
-        const comparedPassword = comparePassword(req.body.password, user.dataValues.password);
+        const password = req.body.password
+        const comparedPassword = password && comparePassword(password, user.dataValues.password);
 
         if (!comparedPassword) {
           res.status(400).json({
