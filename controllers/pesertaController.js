@@ -11,7 +11,7 @@ class PesertaController {
     try {
       const response = await Peserta.findAll({
         where: {
-          penanggungjawab: req.params.nip
+          nip_penanggungjawab: req.params.nip
         },
         order: [['createdAt', 'DESC']],
         attributes: {
@@ -32,6 +32,12 @@ class PesertaController {
                 model: Pegawai,
                 attributes: {
                   exclude: ['createdAt', 'updatedAt', 'password']
+                }
+              },
+              {
+                model: Undangan,
+                attributes: {
+                  exclude: ['createdAt', 'updatedAt']
                 }
               }
             ]
@@ -147,8 +153,11 @@ class PesertaController {
             jumlah_peserta: req.body.jumlah_peserta,
             jenis_peserta: req.body.jenis_peserta,
             tanggal: req.body.tanggal,
-            penanggungjawab: req.body.penanggungjawab
+            penanggungjawab: req.body.penanggungjawab,
+            nip_penanggungjawab: req.body.nip_penanggungjawab
           }
+          console.log(req.body);
+          console.log(payload, 'payload');
 
           Peserta.create(payload)
             .then(response => {

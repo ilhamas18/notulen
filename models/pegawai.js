@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Pegawai.hasMany(models.Uuid, { foreignKey: 'nip_pegawai' });
-      Pegawai.hasMany(models.Peserta, { foreignKey: 'penanggungjawab' });
-      Pegawai.hasMany(models.Notulen, { foreignKey: 'penanggungjawab' });
+      Pegawai.hasMany(models.Peserta, { foreignKey: 'nip_penanggungjawab' });
+      Pegawai.hasMany(models.Notulen, { foreignKey: 'nip_penanggungjawab' });
       Pegawai.belongsTo(models.Perangkat_Daerah, { foreignKey: 'kode_opd' });
     }
   }

@@ -632,7 +632,8 @@ class NotulenController {
             link_img_pendukung: req.body.link_img_pendukung,
             signature: req.body.signature,
             nip_atasan: req.body.nip_atasan,
-            penanggungjawab: req.body.penanggungjawab
+            penanggungjawab: req.body.penanggungjawab,
+            nip_penanggungjawab: req.body.nip_penanggungjawab
           }
 
           Notulen.create(payload)
@@ -1255,7 +1256,7 @@ class NotulenController {
     try {
       const response = await Notulen.findAll({
         where: {
-          penanggungjawab: {
+          nip_penanggungjawab: {
             [Op.eq]: req.params.nip
           },
           status: {
