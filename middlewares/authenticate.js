@@ -42,7 +42,7 @@ const authenticate = async (req, res, next) => {
         success: false,
         data: {
           code: 500,
-          message: 'Trouble network',
+          message: 'OwO terjadi kesalahan >.<',
           data: err
         }
       })
